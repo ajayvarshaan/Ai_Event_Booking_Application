@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { bookingAPI, eventAPI, activityAPI } from '../services/api';
+import { bookingAPI, eventAPI, activityAPI, aiAPI } from '../services/api';
 import './AdminDashboard.css';
 
 interface Activity {
@@ -48,6 +48,24 @@ const AdminDashboard: React.FC = () => {
     userBookingStats: []
   });
   const [loading, setLoading] = useState(true);
+  const [forecast, setForecast] = useState<{
+    forecast: string;
+    sellOutRisks: { eventId: string; title: string; risk: string }[];
+  } | null>(null);
+  const [forecastLoading, setForecastLoading] = useState(false);
+
+  const loadForecast = async () => {
+    setForecastLoading(true);
+    setForecast(null);
+    try {
+      const response = await aiAPI.demandForecast();
+      setForecast(response.data);
+    } catch (error) {
+      console.error('Demand forecast error:', error);
+    } finally {
+      setForecastLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (user?.role !== 'admin') {
@@ -136,6 +154,57 @@ const AdminDashboard: React.FC = () => {
         <div className="dashboard-header">
           <h1>📊 Admin Dashboard</h1>
           <p>Overview of your event booking system</p>
+        </div>
+
+        {/* AI Demand Forecast */}
+        <div className="ai-forecast-section">
+          <div className="ai-forecast-header">
+            <div>
+              <span className="ai-forecast-kicker">📈 AI Demand Forecast</span>
+              <h2>Predictive Analytics</h2>
+              <p>Gemini analyzes booking momentum, capacity, and time-to-event to predict sell-out risks.</p>
+            </div>
+            <button
+              className="btn-ai-forecast"
+              onClick={loadForecast}
+              disabled={forecastLoading}
+            >
+              {forecastLoading ? '⏳ Analyzing...' : '✨ Generate Forecast'}
+            </button>
+          </div>
+
+          {forecastLoading && (
+            <div className="ai-forecast-loading">
+              Gemini is analyzing booking momentum across all events...
+            </div>
+          )}
+
+          {forecast && !forecastLoading && (
+            <div className="ai-forecast-content">
+              <div className="ai-forecast-text">
+                <span className="ai-forecast-badge">🤖 Gemini Analysis</span>
+                <p style={{ whiteSpace: 'pre-wrap' }}>{forecast.forecast}</p>
+              </div>
+
+              {forecast.sellOutRisks.length > 0 && (
+                <div className="sellout-risk-list">
+                  <h3>🔥 Sell-Out Risk Events</h3>
+                  {forecast.sellOutRisks.map((risk) => (
+                    <div key={risk.eventId} className="sellout-risk-card">
+                      <strong>{risk.title}</strong>
+                      <p>{risk.risk}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {forecast.sellOutRisks.length === 0 && (
+                <div className="sellout-none">
+                  <p>✅ No immediate sell-out risks detected.</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* User Booking Details with Event Information */}

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { eventAPI } from '../services/api';
+import { eventAPI, aiAPI } from '../services/api';
 import { fadeInUp, scaleIn } from '../animations/gsapAnimations';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
@@ -24,6 +24,7 @@ const CreateEvent: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -44,6 +45,41 @@ const CreateEvent: React.FC = () => {
     
     if (name === 'image' && value) {
       setImagePreview(value);
+    }
+  };
+
+  const handleAiGenerate = async () => {
+    if (!formData.title.trim()) {
+      setToast({ message: 'Enter a title first so AI can generate a description!', type: 'info' });
+      return;
+    }
+
+    setAiGenerating(true);
+    try {
+      const response = await aiAPI.generateDescription({
+        title: formData.title,
+        category: formData.category || undefined,
+        location: formData.location || undefined,
+        price: formData.price || undefined,
+        date: formData.date || undefined
+      });
+
+      const { description, suggestedCategory, suggestedPrice, suggestedCapacity } = response.data;
+
+      setFormData((prev) => ({
+        ...prev,
+        description: description || prev.description,
+        category: suggestedCategory || prev.category,
+        price: suggestedPrice || prev.price,
+        capacity: suggestedCapacity || prev.capacity
+      }));
+
+      setToast({ message: '✨ AI generated event details! Review and adjust as needed.', type: 'success' });
+    } catch (error) {
+      console.error('AI generation error:', error);
+      setToast({ message: 'AI generation failed. Please try again.', type: 'error' });
+    } finally {
+      setAiGenerating(false);
     }
   };
 
@@ -129,13 +165,23 @@ const CreateEvent: React.FC = () => {
 
             <div className="form-group">
               <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={4}
-                required
-              />
+              <div className="ai-generate-row">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={4}
+                  required
+                />
+                <button
+                  type="button"
+                  className="ai-generate-btn"
+                  onClick={handleAiGenerate}
+                  disabled={aiGenerating}
+                >
+                  {aiGenerating ? '⏳ Generating...' : '✨ Generate with AI'}
+                </button>
+              </div>
             </div>
 
             <div className="form-row">

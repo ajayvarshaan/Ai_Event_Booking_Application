@@ -1,7 +1,7 @@
 .dashboard {
   min-height: 100vh;
   padding: 100px 20px 60px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
   background-attachment: fixed;
   position: relative;
 }
@@ -14,8 +14,8 @@
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 200, 255, 0.1) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -171,13 +171,13 @@
 
 /* Search and Filter Section */
 .search-filter-section {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   border-radius: 20px;
   padding: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 30px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
@@ -249,12 +249,12 @@
   display: flex;
   gap: 15px;
   margin-bottom: 30px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   border-radius: 20px;
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
 }
 
 .tab-btn {
@@ -284,13 +284,13 @@
 
 /* User Booking Details Section */
 .user-booking-details-section {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   border-radius: 20px;
   padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   margin-bottom: 40px;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
 }
 
 .user-booking-details-section h2 {
@@ -523,12 +523,257 @@
 
 /* Quick Actions */
 .quick-actions {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
   border-radius: 20px;
   padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Event Comparison Section */
+.event-compare-section {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
+  padding: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  margin-bottom: 40px;
+}
+
+.edit-compare-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.edit-compare-kicker {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fef3c7;
+  background: rgba(255, 209, 102, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.edit-compare-header h2 {
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+
+.edit-compare-header p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.event-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.event-picker-chip {
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.event-picker-chip:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.event-picker-chip.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+}
+
+.compare-no-events {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+}
+
+.compare-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.event-compare-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: adminCompareFloat 6s ease-in-out infinite;
+}
+
+.event-compare-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.event-compare-card:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes adminCompareFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.event-compare-card:hover {
+  border-color: rgba(255, 209, 102, 0.7);
+  box-shadow:
+    0 28px 60px rgba(102, 126, 234, 0.35),
+    0 0 40px rgba(255, 209, 102, 0.15);
+}
+
+/* Top accent line */
+.event-compare-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #22d3ee, #667eea);
+  background-size: 300% 100%;
+  animation: adminAccentFlow 5s linear infinite;
+  z-index: 5;
+}
+
+@keyframes adminAccentFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
+}
+
+.event-compare-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.event-compare-cat {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(102, 126, 234, 0.14);
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.event-compare-remove {
+  border: none;
+  border-radius: 10px;
+  padding: 7px 12px;
+  background: rgba(239, 68, 68, 0.14);
+  color: #991b1b;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.event-compare-card h3 {
+  font-size: 22px;
+  color: #1a202c;
+  font-weight: 800;
+  margin: 0;
+}
+
+.event-compare-card > p {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+}
+
+.event-compare-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.event-compare-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  padding-bottom: 10px;
+}
+
+.event-compare-row span {
+  color: #64748b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.event-compare-row strong {
+  color: #1a202c;
+  font-size: 15px;
+}
+
+.event-demand-meter {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.event-demand-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e 0%, #f59e0b 60%, #ef4444 100%);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+  position: relative;
+  overflow: hidden;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.event-demand-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: adminDemandShimmer 2s ease-in-out infinite;
+}
+
+@keyframes adminDemandShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .quick-actions h2 {
@@ -721,7 +966,7 @@
     padding: 15px;
   }
 
-  .quick-actions {
+.quick-actions {
     padding: 25px;
   }
 
@@ -743,6 +988,28 @@
 
   .action-icon {
     font-size: 36px;
+  }
+
+  /* Admin Compare Section mobile */
+  .event-compare-section {
+    padding: 25px 18px;
+  }
+
+  .edit-compare-header h2 {
+    font-size: 24px;
+  }
+
+  .edit-compare-header p {
+    font-size: 14px;
+  }
+
+  .compare-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .event-compare-card {
+    padding: 20px;
   }
 }
 
@@ -810,7 +1077,38 @@
     font-size: 13px;
   }
 
-  .summary-value {
+.summary-value {
     font-size: 18px;
+  }
+
+  /* Admin Compare Section 480px */
+  .event-compare-section {
+    padding: 20px 14px;
+  }
+
+  .edit-compare-header h2 {
+    font-size: 20px;
+  }
+
+  .edit-compare-header p {
+    font-size: 13px;
+  }
+
+  .event-picker-chip {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .event-compare-card {
+    padding: 16px;
+  }
+
+  .event-compare-card h3 {
+    font-size: 19px;
+  }
+
+  .event-compare-row span,
+  .event-compare-row strong {
+    font-size: 13px;
   }
 }

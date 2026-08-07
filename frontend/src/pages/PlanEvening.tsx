@@ -1,8 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { eventAPI } from '../services/api';
-import { fadeInUp, staggerFadeIn } from '../animations/gsapAnimations';
+import { eventAPI, aiAPI } from '../services/api';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './PlanEvening.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Event {
   _id: string;
@@ -27,17 +30,39 @@ const PlanEvening: React.FC = () => {
   const [vibe, setVibe] = useState<EveningVibe>('any');
   const [mode, setMode] = useState<PlanMode>('flexible');
   const [maxBudget, setMaxBudget] = useState(120);
-  const [startHour, setStartHour] = useState(17);
+  const [startHour, setStartHour] = useState(8);
   const [shareState, setShareState] = useState<'idle' | 'copied' | 'failed'>('idle');
-  const navigate = useNavigate();
+  const [aiItinerary, setAiItinerary] = useState<string>('');
+  const [aiItineraryLoading, setAiItineraryLoading] = useState(false);
+const navigate = useNavigate();
   const titleRef = useRef<HTMLHeadingElement>(null);
   const planRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const orb1Ref = useRef<HTMLDivElement>(null);
+  const orb2Ref = useRef<HTMLDivElement>(null);
+  const orb3Ref = useRef<HTMLDivElement>(null);
+  const aiBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const response = await eventAPI.getAll();
-        setEvents(Array.isArray(response.data) ? response.data : []);
+        const eventData = response.data;
+        console.log('=== PLAN EVENING DEBUG ===');
+        console.log('API Response:', response);
+        console.log('Fetched events count:', eventData.length);
+        console.log('Fetched events:', eventData);
+        if (eventData.length > 0) {
+          console.log('First event sample:', eventData[0]);
+          console.log('Event date:', eventData[0].date);
+          console.log('Event time:', eventData[0].time);
+          console.log('Event price:', eventData[0].price);
+        }
+        setEvents(eventData);
       } catch (error) {
         console.error('Failed to fetch events for evening planner:', error);
         setEvents([]);
@@ -49,26 +74,196 @@ const PlanEvening: React.FC = () => {
     fetchEvents();
   }, []);
 
+// Master GSAP entrance animations
   useEffect(() => {
-    fadeInUp(titleRef.current);
-  }, []);
+    const ctx = gsap.context(() => {
+      // Floating background orbs
+      if (orb1Ref.current) {
+        gsap.to(orb1Ref.current, {
+          x: 120, y: 80, scale: 1.4, duration: 12, repeat: -1, yoyo: true, ease: 'sine.inOut'
+        });
+      }
+      if (orb2Ref.current) {
+        gsap.to(orb2Ref.current, {
+          x: -100, y: -60, scale: 1.3, duration: 10, repeat: -1, yoyo: true, ease: 'sine.inOut'
+        });
+      }
+      if (orb3Ref.current) {
+        gsap.to(orb3Ref.current, {
+          x: 80, y: -70, scale: 1.5, duration: 14, repeat: -1, yoyo: true, ease: 'sine.inOut'
+        });
+      }
 
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      // Title word-by-word reveal with 3D rotation + glow
+      if (titleRef.current) {
+        const words = titleRef.current.textContent?.split(' ') || [];
+        titleRef.current.textContent = '';
+        words.forEach((word, wi) => {
+          const wordSpan = document.createElement('span');
+          wordSpan.style.display = 'inline-block';
+          wordSpan.style.marginRight = '0.35em';
+          wordSpan.style.opacity = '0';
+          wordSpan.style.transform = 'translateY(60px) rotateX(60deg)';
+          wordSpan.style.transformStyle = 'preserve-3d';
+          wordSpan.textContent = word;
+          titleRef.current?.appendChild(wordSpan);
+          tl.to(wordSpan, {
+            opacity: 1, y: 0, rotationX: 0, duration: 0.7, ease: 'back.out(1.8)'
+          }, wi * 0.12);
+        });
+      }
+
+      // Subtitle fade
+      if (headerRef.current) {
+        const p = headerRef.current.querySelector('p');
+        if (p) {
+          tl.fromTo(p, { opacity: 0, y: 30, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power4.out' }, '-=0.4');
+        }
+      }
+
+      // Planner controls stagger entrance
+      if (controlsRef.current) {
+        tl.fromTo(controlsRef.current.querySelectorAll('.planner-control'),
+          { opacity: 0, y: 60, scale: 0.9, rotationY: -12 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.7, stagger: 0.1,
+            ease: 'back.out(1.7)', transformPerspective: 800
+          },
+          '-=0.3'
+        );
+      }
+
+      // Summary items stagger with counters
+      if (summaryRef.current) {
+        tl.fromTo(summaryRef.current.querySelectorAll('.summary-item'),
+          { opacity: 0, y: 40, scale: 0.85 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.1, ease: 'back.out(1.7)',
+            onComplete: () => {
+              summaryRef.current?.querySelectorAll('.summary-item strong').forEach((el) => {
+                const target = el as HTMLElement;
+                const text = target.textContent || '0';
+                const match = text.match(/[\d,]+(?:\.\d+)?/);
+                if (match) {
+                  const prefix = text.includes('$') ? '$' : '';
+                  const finalValue = parseFloat(match[0].replace(/,/g, ''));
+                  const obj = { val: 0 };
+                  gsap.to(obj, {
+                    val: finalValue, duration: 1.2, ease: 'power2.out',
+                    onUpdate: () => {
+                      target.textContent = prefix + (finalValue % 1 !== 0 ? obj.val.toFixed(2) : Math.round(obj.val).toString());
+                    }
+                  });
+                }
+              });
+            }
+          },
+          '-=0.4'
+        );
+      }
+
+      // Actions reveal
+      if (actionsRef.current) {
+        tl.fromTo(actionsRef.current,
+          { opacity: 0, y: 40, scale: 0.95 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power3.out' },
+          '-=0.4'
+        );
+      }
+
+      // AI button glow pulse
+      if (aiBtnRef.current) {
+        gsap.to(aiBtnRef.current, {
+          boxShadow: '0 0 30px rgba(240,147,251,0.9), 0 0 60px rgba(102,126,234,0.6)',
+          duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut'
+        });
+      }
+
+      // Event cards 3D flip entrance with ScrollTrigger
+      if (planRef.current) {
+        gsap.fromTo(planRef.current.querySelectorAll('.plan-event-card'),
+          { opacity: 0, y: 100, scale: 0.9, rotationY: -18 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.9, stagger: 0.15,
+            ease: 'back.out(1.6)', transformPerspective: 900,
+            scrollTrigger: { trigger: planRef.current, start: 'top 85%' }
+          }
+        );
+      }
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, [loading]);
+
+  // Re-animate plan cards when filters change
   useEffect(() => {
-    if (planRef.current) {
+    if (!loading && planRef.current) {
       const cards = planRef.current.querySelectorAll('.plan-event-card');
       if (cards.length > 0) {
-        staggerFadeIn(cards, 0.12);
+        gsap.fromTo(cards,
+          { opacity: 0, y: 60, scale: 0.9, rotationY: -12 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.7, stagger: 0.12,
+            ease: 'back.out(1.6)', transformPerspective: 800
+          }
+        );
       }
     }
-  }, [vibe, maxBudget, startHour, events]);
+  }, [vibe, maxBudget, startHour, events, loading]);
+
+  // 3D tilt on event card hover
+  const handleCardMove = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    gsap.to(card, {
+      rotationX: ((y - centerY) / centerY) * -6,
+      rotationY: ((x - centerX) / centerX) * 6,
+      transformPerspective: 900,
+      scale: 1.04,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleCardLeave = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    gsap.to(card, {
+      rotationX: 0, rotationY: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.5)'
+    });
+  }, []);
+
+  // AI itinerary box entrance
+  useEffect(() => {
+    if (aiItinerary && planRef.current) {
+      const cards = planRef.current.querySelectorAll('.plan-event-card');
+      if (cards.length > 0) {
+        gsap.fromTo(cards,
+          { opacity: 0, y: 60, scale: 0.92, rotationY: -12 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.7, stagger: 0.12,
+            ease: 'back.out(1.6)', transformPerspective: 800
+          }
+        );
+      }
+    }
+  }, [aiItinerary]);
 
   const parseEventDateTime = (event: Event) => {
-    const base = new Date(event.date);
+    // Handle ISO string dates properly
+    const date = new Date(event.date);
     const [hoursStr, minutesStr] = event.time.split(':');
     const hours = Number(hoursStr) || 0;
     const minutes = Number(minutesStr) || 0;
-    base.setHours(hours, minutes, 0, 0);
-    return base;
+    
+    // Create new date in local timezone
+    const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0, 0);
+    return localDate;
   };
 
   const getDemandRatio = (event: Event) => {
@@ -89,29 +284,72 @@ const PlanEvening: React.FC = () => {
   };
 
   const plannedEvents = useMemo(() => {
-    const now = Date.now();
+    if (!events || events.length === 0) {
+      console.log('No events in state');
+      return [];
+    }
+    
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    console.log('Current date (midnight):', now);
 
     const upcoming = events
       .filter((event) => {
-        const dt = parseEventDateTime(event);
-        const hours = dt.getHours();
-        return dt.getTime() > now && dt.getTime() - now <= 1000 * 60 * 60 * 24 * 14 && hours >= startHour;
+        try {
+          const dt = parseEventDateTime(event);
+          const eventHour = dt.getHours();
+          const afterStartHour = eventHour >= startHour;
+          
+          console.log(`Event: ${event.title}`);
+          console.log(`  Parsed DateTime: ${dt}`);
+          console.log(`  Event Hour: ${eventHour}, Start Hour: ${startHour}, After Start: ${afterStartHour}`);
+          console.log(`  Price: $${event.price}, Max Budget: $${maxBudget}, Within Budget: ${event.price <= maxBudget}`);
+          console.log(`  Vibe Match: ${vibeMatch(event)}`);
+          
+          return afterStartHour;
+        } catch (e) {
+          console.warn('Error parsing event:', event, e);
+          return false;
+        }
       })
-      .filter((event) => event.price <= maxBudget)
-      .filter((event) => vibeMatch(event));
+      .filter((event) => {
+        const pass = event.price <= maxBudget;
+        console.log(`Budget filter for ${event.title}: ${pass}`);
+        return pass;
+      })
+      .filter((event) => {
+        const pass = vibeMatch(event);
+        console.log(`Vibe filter for ${event.title}: ${pass}`);
+        return pass;
+      });
+    
+    console.log('=== FILTER RESULTS ===');
+    console.log('Total events:', events.length);
+    console.log('Upcoming events after all filters:', upcoming.length);
+    console.log('Upcoming events:', upcoming);
 
     const scored = upcoming
       .map((event) => {
         const dt = parseEventDateTime(event);
-        const daysAway = Math.max((dt.getTime() - now) / (1000 * 60 * 60 * 24), 0);
-        const soonScore = Math.max(0, 1 - Math.min(daysAway, 14) / 14);
+        const eventDate = new Date(dt);
+        eventDate.setHours(0, 0, 0, 0);
+        const daysAway = Math.floor((eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Normalize days away (cap at 365 for scoring)
+        const normalizedDays = Math.min(daysAway, 365);
+        const soonScore = Math.max(0, 1 - normalizedDays / 365);
         const valueScore = Math.max(0, 1 - Math.min(event.price, maxBudget) / Math.max(maxBudget, 1));
         const demandScore = getDemandRatio(event);
-        const totalScore = soonScore * 45 + valueScore * 35 + demandScore * 20;
-        return { event, score: Math.round(totalScore * 100) / 100, dateTime: dt };
+        const totalScore = (soonScore * 45 + valueScore * 35 + demandScore * 20) / 100;
+        
+        return { event, score: Math.round(totalScore * 100), dateTime: dt };
       })
       .sort((a, b) => b.score - a.score);
+    
+    console.log('Scored events count:', scored.length);
+    console.log('Scored events:', scored);
 
+    console.log('Mode:', mode);
     if (mode === 'single-night') {
       const byDay = new Map<string, typeof scored>();
 
@@ -158,6 +396,44 @@ const PlanEvening: React.FC = () => {
     return itinerary;
   }, [events, maxBudget, startHour, vibe, mode]);
 
+  const handleGenerateAIItinerary = async () => {
+    if (aiItineraryLoading) return;
+
+    setAiItineraryLoading(true);
+    setAiItinerary('');
+
+    try {
+      const response = await aiAPI.itinerary({
+        vibe,
+        maxBudget,
+        startHour,
+        mode
+      });
+      setAiItinerary(response.data.itinerary);
+
+// Trigger animation on AI cards
+      setTimeout(() => {
+        if (planRef.current) {
+          const cards = planRef.current.querySelectorAll('.plan-event-card');
+          if (cards.length > 0) {
+            gsap.fromTo(cards,
+              { opacity: 0, y: 60, scale: 0.92, rotationY: -12 },
+              {
+                opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.7, stagger: 0.12,
+                ease: 'back.out(1.6)', transformPerspective: 800
+              }
+            );
+          }
+        }
+      }, 100);
+    } catch (error) {
+      console.error('AI itinerary error:', error);
+      setAiItinerary('⚠️ Failed to generate AI itinerary. Please try again.');
+    } finally {
+      setAiItineraryLoading(false);
+    }
+  };
+
   const handleSharePlan = async () => {
     if (plannedEvents.length === 0) {
       setShareState('failed');
@@ -192,15 +468,18 @@ const PlanEvening: React.FC = () => {
     return <div className="loading">Building your evening planner...</div>;
   }
 
-  return (
-    <div className="plan-evening-page">
-      <div className="container">
-        <div className="plan-header">
+return (
+    <div className="plan-evening-page" ref={pageRef}>
+      <div className="plan-orb plan-orb-1" ref={orb1Ref}></div>
+      <div className="plan-orb plan-orb-2" ref={orb2Ref}></div>
+      <div className="plan-orb plan-orb-3" ref={orb3Ref}></div>
+      <div className="container plan-evening-content">
+        <div className="plan-header" ref={headerRef}>
           <h1 ref={titleRef}>Plan My Evening</h1>
           <p>Generate a smart event itinerary by vibe, budget, and preferred start time.</p>
         </div>
 
-        <div className="planner-controls">
+        <div className="planner-controls" ref={controlsRef}>
           <div className="planner-control planner-mode">
             <span>Itinerary Mode</span>
             <div className="mode-toggle">
@@ -248,7 +527,7 @@ const PlanEvening: React.FC = () => {
             <span>Start After ({String(startHour).padStart(2, '0')}:00)</span>
             <input
               type="range"
-              min={15}
+              min={8}
               max={22}
               step={1}
               value={startHour}
@@ -257,7 +536,7 @@ const PlanEvening: React.FC = () => {
           </label>
         </div>
 
-        <div className="planner-summary">
+<div className="planner-summary" ref={summaryRef}>
           <div className="summary-item">
             <span>Selected Events</span>
             <strong>{plannedEvents.length}</strong>
@@ -276,7 +555,16 @@ const PlanEvening: React.FC = () => {
           </div>
         </div>
 
-        <div className="planner-actions">
+        <div className="planner-actions" ref={actionsRef}>
+          <button
+            ref={aiBtnRef}
+            type="button"
+            className="btn-ai"
+            onClick={handleGenerateAIItinerary}
+            disabled={aiItineraryLoading}
+          >
+            {aiItineraryLoading ? '⏳ Gemini is planning...' : '✨ Generate AI Itinerary'}
+          </button>
           <button
             type="button"
             className="btn-secondary"
@@ -291,6 +579,17 @@ const PlanEvening: React.FC = () => {
           )}
         </div>
 
+        {aiItinerary && (
+          <div className="ai-itinerary-box">
+            <div className="ai-itinerary-header">
+              <span className="ai-itinerary-badge">🤖 Gemini Smart Plan</span>
+            </div>
+            <p className="ai-itinerary-content" style={{ whiteSpace: 'pre-wrap' }}>
+              {aiItinerary}
+            </p>
+          </div>
+        )}
+
         {plannedEvents.length === 0 ? (
           <div className="plan-empty">
             <h2>No matching evening plan right now</h2>
@@ -298,13 +597,18 @@ const PlanEvening: React.FC = () => {
           </div>
         ) : (
           <div ref={planRef} className="plan-grid">
-            {plannedEvents.map(({ event, score }) => (
-              <article key={event._id} className="plan-event-card">
+{plannedEvents.map(({ event, score }) => (
+              <article
+                key={event._id}
+                className="plan-event-card"
+                onMouseMove={handleCardMove}
+                onMouseLeave={handleCardLeave}
+              >
                 <img src={event.image} alt={event.title} className="plan-event-image" />
                 <div className="plan-event-body">
                   <div className="plan-event-top">
                     <span className="plan-chip">{event.category}</span>
-                    <span className="plan-score">Fit {Math.round(score)}%</span>
+                    <span className="plan-score">Fit {score}%</span>
                   </div>
                   <h3>{event.title}</h3>
                   <p>{event.description}</p>

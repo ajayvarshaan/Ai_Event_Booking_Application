@@ -563,3 +563,232 @@ export const skewAnimation = (element: HTMLElement | null): void => {
     ease: 'sine.inOut'
   });
 };
+
+// ============ ADVANCED UNIFIED ANIMATIONS ============
+
+// 3D Tilt effect for cards
+export const tilt3D = (element: HTMLElement | null, intensity: number = 6): void => {
+  if (!element) return;
+  
+  const onMove = (e: MouseEvent) => {
+    const rect = element.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    gsap.to(element, {
+      rotationX: ((y - centerY) / centerY) * -intensity,
+      rotationY: ((x - centerX) / centerX) * intensity,
+      transformPerspective: 1000,
+      scale: 1.02,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  };
+  
+  const onLeave = () => {
+    gsap.to(element, {
+      rotationX: 0,
+      rotationY: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  };
+  
+  element.addEventListener('mousemove', onMove);
+  element.addEventListener('mouseleave', onLeave);
+};
+
+// Magnetic button effect
+export const magneticButton = (element: HTMLElement | null, strength: number = 0.25): void => {
+  if (!element) return;
+  
+  const onMove = (e: MouseEvent) => {
+    const rect = element.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    gsap.to(element, {
+      x: x * strength,
+      y: y * strength,
+      duration: 0.3,
+      ease: 'power2.out'
+    });
+  };
+  
+  const onLeave = () => {
+    gsap.to(element, {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  };
+  
+  element.addEventListener('mousemove', onMove);
+  element.addEventListener('mouseleave', onLeave);
+};
+
+// Animated counter for numbers
+export const animateCounter = (element: HTMLElement | null, finalValue: number, prefix: string = '', duration: number = 1.5): void => {
+  if (!element) return;
+  const obj = { val: 0 };
+  gsap.to(obj, {
+    val: finalValue,
+    duration,
+    ease: 'power2.out',
+    onUpdate: () => {
+      const formatted = obj.val >= 1000
+        ? Math.round(obj.val).toLocaleString()
+        : (finalValue % 1 !== 0 ? obj.val.toFixed(2) : Math.round(obj.val).toString());
+      element.textContent = prefix + formatted;
+    }
+  });
+};
+
+// Word-by-word text reveal with 3D rotation
+export const wordReveal3D = (element: HTMLElement | null, stagger: number = 0.1): void => {
+  if (!element) return;
+  const words = element.textContent?.split(' ') || [];
+  element.textContent = '';
+  
+  words.forEach((word, wi) => {
+    const span = document.createElement('span');
+    span.style.display = 'inline-block';
+    span.style.marginRight = '0.35em';
+    span.style.opacity = '0';
+    span.style.transform = 'translateY(60px) rotateX(60deg)';
+    span.style.transformStyle = 'preserve-3d';
+    span.textContent = word;
+    element.appendChild(span);
+    
+    gsap.to(span, {
+      opacity: 1,
+      y: 0,
+      rotationX: 0,
+      duration: 0.7,
+      delay: wi * stagger,
+      ease: 'back.out(1.8)'
+    });
+  });
+};
+
+// Character-by-character reveal
+export const charReveal = (element: HTMLElement | null, stagger: number = 0.03): void => {
+  if (!element) return;
+  const chars = Array.from(element.textContent || '');
+  element.textContent = '';
+  
+  chars.forEach((char, i) => {
+    const span = document.createElement('span');
+    span.style.display = 'inline-block';
+    span.style.marginRight = char === ' ' ? '0.25em' : '0';
+    span.style.opacity = '0';
+    span.style.transform = 'translateY(40px) rotateX(60deg)';
+    span.style.transformStyle = 'preserve-3d';
+    span.textContent = char === ' ' ? '\u00A0' : char;
+    element.appendChild(span);
+    
+    gsap.to(span, {
+      opacity: 1,
+      y: 0,
+      rotationX: 0,
+      duration: 0.6,
+      delay: i * stagger,
+      ease: 'back.out(1.8)'
+    });
+  });
+};
+
+// Scroll-triggered section reveal
+export const scrollSectionReveal = (element: HTMLElement | null, from: string = 'top 85%'): void => {
+  if (!element) return;
+  gsap.fromTo(element,
+    { opacity: 0, y: 80 },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: element,
+        start: from
+      }
+    }
+  );
+};
+
+// Staggered card entrance with 3D flip
+export const staggerCards3D = (elements: HTMLElement[] | NodeListOf<Element>, stagger: number = 0.15): void => {
+  if (!elements || elements.length === 0) return;
+  gsap.fromTo(elements,
+    { opacity: 0, y: 100, scale: 0.9, rotationY: -18 },
+    {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      rotationY: 0,
+      duration: 0.9,
+      stagger,
+      ease: 'back.out(1.6)',
+      transformPerspective: 900
+    }
+  );
+};
+
+// Animated progress bar
+export const animateProgressBar = (element: HTMLElement | null, targetWidth: string): void => {
+  if (!element) return;
+  gsap.fromTo(element,
+    { width: '0%' },
+    {
+      width: targetWidth,
+      duration: 1.2,
+      ease: 'power3.out'
+    }
+  );
+};
+
+// Floating orbs background animation
+export const animateFloatingOrbs = (elements: HTMLElement[] | NodeListOf<Element>): void => {
+  if (!elements || elements.length === 0) return;
+  elements.forEach((orb, i) => {
+    gsap.to(orb, {
+      x: (i % 2 === 0 ? 1 : -1) * (60 + i * 20),
+      y: (i % 2 === 0 ? -1 : 1) * (40 + i * 15),
+      scale: 1.2 + i * 0.1,
+      duration: 8 + i * 2,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+  });
+};
+
+// Continuous glow pulse
+export const glowPulse = (element: HTMLElement | null, color: string = '#667eea'): void => {
+  if (!element) return;
+  gsap.to(element, {
+    boxShadow: `0 0 30px ${color}, 0 0 60px ${color}`,
+    duration: 2,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut'
+  });
+};
+
+// Shimmer sweep effect
+export const shimmerSweep = (element: HTMLElement | null): void => {
+  if (!element) return;
+  gsap.fromTo(element,
+    { backgroundPosition: '200% 0' },
+    {
+      backgroundPosition: '-200% 0',
+      duration: 3,
+      repeat: -1,
+      ease: 'linear'
+    }
+  );
+};

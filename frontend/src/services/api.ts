@@ -122,3 +122,57 @@ export const wishlistAPI = {
   check: (eventId: string) =>
     API.get(`/wishlist/check/${eventId}`)
 };
+
+export const aiAPI = {
+  chat: (message: string, history: { role: 'user' | 'model'; text: string }[]) =>
+    API.post<{ reply: string }>('/ai/chat', { message, history }),
+  recommend: (preferences: {
+    vibe?: string;
+    maxBudget?: number;
+    startAfter?: string;
+    category?: string;
+    query?: string;
+  }) =>
+    API.post<{ recommendations: string }>('/ai/recommend', preferences),
+  personalized: (limit?: number) =>
+    API.post<{ recommendations: string; eventIds: string[] }>('/ai/personalized', { limit }),
+  search: (query: string) =>
+    API.post<{ explanation: string; eventIds: string[] }>('/ai/search', { query }),
+  itinerary: (preferences: {
+    vibe?: string;
+    maxBudget?: number;
+    startHour?: number;
+    mode?: string;
+  }) =>
+    API.post<{ itinerary: string; eventIds: string[] }>('/ai/itinerary', preferences),
+  generateDescription: (details: {
+    title?: string;
+    category?: string;
+    location?: string;
+    price?: number;
+    date?: string;
+  }) =>
+    API.post<{ description: string; suggestedCategory: string; suggestedPrice: number; suggestedCapacity: number }>(
+      '/ai/generate-description',
+      details
+    ),
+  summarizeReviews: (eventId: string) =>
+    API.post<{ summary: string; sentiment: string; positivePoints: string[]; negativePoints: string[] }>(
+      '/ai/summarize-reviews',
+      { eventId }
+    ),
+  pricingAdvice: (eventId: string) =>
+    API.post<{ advice: string; recommendedPrice: number; riskLevel: string }>(
+      '/ai/pricing-advice',
+      { eventId }
+    ),
+  bookingAssistant: (eventId: string, seats: number) =>
+    API.post<{ message: string; tips: string[] }>(
+      '/ai/booking-assistant',
+      { eventId, seats }
+    ),
+  demandForecast: () =>
+    API.post<{ forecast: string; sellOutRisks: { eventId: string; title: string; risk: string }[] }>(
+      '/ai/demand-forecast'
+    )
+};

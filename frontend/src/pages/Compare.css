@@ -2,6 +2,43 @@
   min-height: 100vh;
   padding: 40px 20px 60px;
   background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add floating orbs */
+.compare-page::before {
+  content: '';
+  position: fixed;
+  top: -120px;
+  right: -120px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 209, 102, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  animation: compareOrbFloat 12s ease-in-out infinite;
+}
+
+.compare-page::after {
+  content: '';
+  position: fixed;
+  bottom: -120px;
+  left: -120px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  animation: compareOrbFloat 14s ease-in-out infinite reverse;
+}
+
+@keyframes compareOrbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 30px) scale(0.95); }
 }
 
 .compare-page-header {
@@ -30,6 +67,12 @@
   font-size: 48px;
   margin: 0 0 10px 0;
   letter-spacing: -1px;
+  background: linear-gradient(135deg, #ffffff 0%, #fef3c7 50%, #ffd166 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 4px 20px rgba(255, 209, 102, 0.3));
+  font-weight: 900;
 }
 
 .compare-page-header p {
@@ -56,10 +99,28 @@
 }
 
 .highlight-card {
-  background: rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at top right, rgba(255, 209, 102, 0.15), transparent 50%),
+    rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 16px;
   padding: 16px;
+  backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
+  animation: highlightPulse 3s ease-in-out infinite;
+}
+
+.highlight-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.highlight-card:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes highlightPulse {
+  0%, 100% { transform: translateY(0); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+  50% { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(255, 209, 102, 0.25); }
 }
 
 .highlight-card span {
@@ -75,6 +136,10 @@
   margin-top: 8px;
   color: #ffffff;
   font-size: 22px;
+  background: linear-gradient(135deg, #ffffff 0%, #ffd166 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .compare-page-grid {
@@ -89,12 +154,60 @@
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 18px 40px rgba(2, 6, 23, 0.2);
+  transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: compareCardFloat 6s ease-in-out infinite;
+}
+
+@keyframes compareCardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.compare-page-card:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.compare-page-card:nth-child(3) {
+  animation-delay: 1s;
+}
+
+.compare-page-card:hover {
+  border-color: rgba(255, 209, 102, 0.7);
+  box-shadow:
+    0 30px 70px rgba(255, 209, 102, 0.3),
+    0 0 40px rgba(102, 126, 234, 0.2),
+    0 0 60px rgba(255, 209, 102, 0.15);
+}
+
+/* Top accent line for compare cards */
+.compare-page-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #ffd166, #f59e0b, #ffd166, #667eea, #ffd166);
+  background-size: 300% 100%;
+  animation: compareAccentFlow 5s linear infinite;
+  z-index: 5;
+}
+
+@keyframes compareAccentFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
 }
 
 .compare-image {
   width: 100%;
   height: 190px;
   object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compare-page-card:hover .compare-image {
+  transform: scale(1.08);
 }
 
 .compare-card-body {
@@ -169,6 +282,35 @@
   margin-top: auto;
 }
 
+/* Demand Meter */
+.compare-demand {
+  margin-top: 4px;
+}
+
+.compare-demand-label {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.compare-demand-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  overflow: hidden;
+}
+
+.compare-demand-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e 0%, #f59e0b 60%, #ef4444 100%);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
 .compare-empty {
   max-width: 760px;
   margin: 60px auto;
@@ -224,5 +366,93 @@
 
   .compare-page-header h1 {
     font-size: 38px;
+  }
+}
+
+@media (max-width: 768px) {
+  .compare-page {
+    padding: 24px 14px 40px;
+  }
+
+  .compare-page-header h1 {
+    font-size: 32px;
+  }
+
+  .compare-page-header p {
+    font-size: 15px;
+  }
+
+  .compare-page-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-clear {
+    width: 100%;
+  }
+
+  .compare-page-header {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .compare-page-header h1 {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .compare-page-header p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .compare-page-kicker {
+    font-size: 11px;
+  }
+
+  .highlight-card {
+    padding: 14px;
+  }
+
+  .highlight-card strong {
+    font-size: 18px;
+  }
+
+  .compare-card-body {
+    padding: 14px;
+  }
+
+  .compare-card-body h3 {
+    font-size: 22px;
+  }
+
+  .compare-card-body p {
+    font-size: 14px;
+  }
+
+  .compare-rows {
+    gap: 8px;
+  }
+
+  .compare-row {
+    padding-bottom: 8px;
+  }
+
+  .compare-row span,
+  .compare-row strong {
+    font-size: 13px;
+  }
+
+  .compare-empty {
+    padding: 50px 16px;
+    margin: 30px auto;
+  }
+
+  .compare-empty h1 {
+    font-size: 32px;
+  }
+
+  .compare-image {
+    height: 150px;
   }
 }

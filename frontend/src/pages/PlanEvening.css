@@ -2,6 +2,47 @@
   min-height: 100vh;
   padding: 40px 20px 60px;
   background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 52%, #16213e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Floating animated orbs */
+.plan-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+}
+
+.plan-orb-1 {
+  width: 340px;
+  height: 340px;
+  top: -60px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(240, 147, 251, 0.6) 0%, rgba(102, 126, 234, 0.2) 60%, transparent 100%);
+}
+
+.plan-orb-2 {
+  width: 300px;
+  height: 300px;
+  top: 30%;
+  right: -100px;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.55) 0%, rgba(102, 126, 234, 0.2) 60%, transparent 100%);
+}
+
+.plan-orb-3 {
+  width: 360px;
+  height: 360px;
+  bottom: -80px;
+  left: 30%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.5) 0%, rgba(118, 75, 162, 0.2) 60%, transparent 100%);
+}
+
+.plan-evening-content {
+  position: relative;
+  z-index: 1;
 }
 
 .plan-header {
@@ -12,8 +53,14 @@
 .plan-header h1 {
   margin: 0 0 10px 0;
   color: #ffffff;
-  font-size: 50px;
+  font-size: 56px;
   letter-spacing: -1px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 40%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 6px 30px rgba(240, 147, 251, 0.35));
+  font-weight: 900;
 }
 
 .plan-header p {
@@ -37,6 +84,19 @@
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 8px 24px rgba(2, 6, 23, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.planner-control:hover {
+  border-color: rgba(240, 147, 251, 0.4);
+  box-shadow:
+    0 12px 32px rgba(102, 126, 234, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-3px);
 }
 
 .planner-control span {
@@ -79,6 +139,7 @@
   background: linear-gradient(120deg, rgba(16, 185, 129, 0.88), rgba(14, 116, 144, 0.88));
   border-color: transparent;
   color: #f8fafc;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
 }
 
 .planner-summary {
@@ -89,10 +150,23 @@
 }
 
 .summary-item {
-  padding: 14px;
+  padding: 16px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    radial-gradient(circle at top right, rgba(240, 147, 251, 0.15), transparent 50%),
+    rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 8px 24px rgba(2, 6, 23, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 147, 251, 0.45);
+  box-shadow: 0 14px 36px rgba(102, 126, 234, 0.3);
 }
 
 .summary-item span {
@@ -106,7 +180,11 @@
 
 .summary-item strong {
   color: #ffffff;
-  font-size: 26px;
+  font-size: 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #f093fb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .planner-actions {
@@ -114,6 +192,91 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 22px;
+}
+
+.btn-ai {
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+  color: white;
+  border-radius: 12px;
+  padding: 12px 22px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 8px 24px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-ai:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow:
+    0 12px 32px rgba(102, 126, 234, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.btn-ai:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-itinerary-box {
+  margin-bottom: 22px;
+  padding: 22px;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(240, 147, 251, 0.12), transparent 42%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.35);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: ai-box-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes ai-box-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ai-itinerary-header {
+  margin-bottom: 12px;
+}
+
+.ai-itinerary-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow:
+    0 4px 12px rgba(102, 126, 234, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.ai-itinerary-content {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 14px;
+  line-height: 1.8;
 }
 
 .btn-secondary {
@@ -162,6 +325,69 @@
   background: rgba(255, 255, 255, 0.97);
   border: 1px solid rgba(255, 255, 255, 0.38);
   box-shadow: 0 18px 40px rgba(2, 6, 23, 0.2);
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease;
+  animation: planCardFloat 7s ease-in-out infinite;
+}
+
+.plan-event-card:nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+.plan-event-card:nth-child(3) {
+  animation-delay: 1.6s;
+}
+
+@keyframes planCardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Top accent line */
+.plan-event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #22d3ee, #667eea);
+  background-size: 300% 100%;
+  animation: planAccentFlow 5s linear infinite;
+  z-index: 5;
+}
+
+@keyframes planAccentFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
+}
+
+/* Shine sweep on hover */
+.plan-event-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(102, 126, 234, 0.08) 50%,
+    transparent 70%
+  );
+  animation: planShine 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 6;
+}
+
+@keyframes planShine {
+  0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.plan-event-card:hover {
+  box-shadow: 0 30px 70px rgba(102, 126, 234, 0.4);
 }
 
 .plan-event-image {
@@ -221,23 +447,37 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(241, 245, 249, 0.9);
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.95) 0%, rgba(237, 242, 255, 0.95) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.12);
+  box-shadow: inset 0 2px 8px rgba(102, 126, 234, 0.06);
 }
 
 .plan-event-meta span {
   color: #334155;
   font-size: 14px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.plan-event-card:hover .plan-event-meta span {
+  transform: translateX(4px);
+  color: #4c51bf;
 }
 
 .plan-empty {
   text-align: center;
   padding: 70px 24px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at top center, rgba(240, 147, 251, 0.2), transparent 50%),
+    rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px);
 }
 
 .plan-empty h2 {
@@ -275,5 +515,74 @@
   .planner-actions {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .planner-actions .btn-ai,
+  .planner-actions .btn-secondary {
+    width: 100%;
+  }
+
+  .plan-evening-page {
+    padding: 24px 14px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .plan-header h1 {
+    font-size: 32px;
+  }
+
+  .plan-header p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .planner-control {
+    padding: 14px;
+  }
+
+  .planner-control span {
+    font-size: 13px;
+  }
+
+  .mode-btn {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .summary-item {
+    padding: 12px;
+  }
+
+  .summary-item strong {
+    font-size: 22px;
+  }
+
+  .plan-event-card h3 {
+    font-size: 22px;
+  }
+
+  .plan-event-body {
+    padding: 14px;
+  }
+
+  .plan-event-meta {
+    padding: 10px;
+  }
+
+  .plan-event-meta span {
+    font-size: 13px;
+  }
+
+  .ai-itinerary-box {
+    padding: 16px;
+  }
+
+  .plan-empty {
+    padding: 50px 16px;
+  }
+
+  .plan-empty h2 {
+    font-size: 26px;
   }
 }

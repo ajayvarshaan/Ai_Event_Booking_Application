@@ -1,3 +1,7 @@
+/* ============================================
+   UNIFIED MODAL - Dark Glassmorphism
+   ============================================ */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -14,31 +18,33 @@
 }
 
 .modal-content {
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(15, 12, 41, 0.95);
   backdrop-filter: blur(30px);
   padding: 40px;
   border-radius: 24px;
   max-width: 450px;
   width: 90%;
   box-shadow: 
-    0 25px 80px rgba(0, 0, 0, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.1) inset;
+    0 25px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 0 40px rgba(255, 0, 150, 0.1),
+    0 0 40px rgba(0, 200, 255, 0.1);
   text-align: center;
   opacity: 0;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .modal-content h2 {
   font-size: 28px;
-  color: #2d3748;
+  color: #ffffff;
   margin-bottom: 20px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .modal-content p {
   font-size: 16px;
-  color: #4a5568;
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 30px;
   line-height: 1.6;
 }
@@ -54,7 +60,7 @@
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;

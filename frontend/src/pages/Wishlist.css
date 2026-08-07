@@ -52,7 +52,35 @@
 }
 
 .wishlist-empty .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-md, 14px);
+  font-size: var(--font-size-base, 16px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 8px 24px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.wishlist-empty .btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 40px rgba(102, 126, 234, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #5568d3 0%, #6a4291 100%);
 }
 
 @media (max-width: 768px) {

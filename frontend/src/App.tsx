@@ -16,11 +16,14 @@ import Compare from './pages/Compare';
 import PlanEvening from './pages/PlanEvening';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import Chatbot from './components/Chatbot';
+import { useAuth } from './context/AuthContext';
 import { pageTransition, revealRouteShell } from './animations/gsapAnimations';
 
 const AppShell: React.FC = () => {
   const location = useLocation();
   const routeShellRef = useRef<HTMLDivElement>(null);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     pageTransition();
@@ -166,6 +169,7 @@ const AppShell: React.FC = () => {
         {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      {isAuthenticated && <Chatbot />}
     </div>
   );
 };

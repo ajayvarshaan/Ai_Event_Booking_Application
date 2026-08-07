@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { eventAPI } from '../services/api';
+import { eventAPI, aiAPI } from '../services/api';
 import { fadeInUp, scaleIn } from '../animations/gsapAnimations';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
@@ -26,6 +26,9 @@ const EditEvent: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiPricingLoading, setAiPricingLoading] = useState(false);
+  const [pricingAdvice, setPricingAdvice] = useState<{ advice: string; recommendedPrice: number; riskLevel: string } | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -81,8 +84,60 @@ const EditEvent: React.FC = () => {
       [name]: name === 'price' || name === 'capacity' ? parseFloat(value) : value
     }));
     
+    
     if (name === 'image' && value) {
       setImagePreview(value);
+    }
+  };
+
+  const handleAiGenerate = async () => {
+    if (!formData.title.trim()) {
+      setToast({ message: 'Enter a title first so AI can generate a description!', type: 'info' });
+      return;
+    }
+
+    setAiGenerating(true);
+    try {
+      const response = await aiAPI.generateDescription({
+        title: formData.title,
+        category: formData.category || undefined,
+        location: formData.location || undefined,
+        price: formData.price || undefined,
+        date: formData.date || undefined
+      });
+
+      const { description, suggestedCategory, suggestedPrice, suggestedCapacity } = response.data;
+
+      setFormData((prev) => ({
+        ...prev,
+        description: description || prev.description,
+        category: suggestedCategory || prev.category,
+        price: suggestedPrice || prev.price,
+        capacity: suggestedCapacity || prev.capacity
+      }));
+
+      setToast({ message: '✨ AI generated event details! Review and adjust as needed.', type: 'success' });
+    } catch (error) {
+      console.error('AI generation error:', error);
+      setToast({ message: 'AI generation failed. Please try again.', type: 'error' });
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  const handleAiPricing = async () => {
+    if (!eventId) return;
+
+    setAiPricingLoading(true);
+    setPricingAdvice(null);
+    try {
+      const response = await aiAPI.pricingAdvice(eventId);
+      setPricingAdvice(response.data);
+    } catch (error) {
+      console.error('AI pricing advice error:', error);
+      setToast({ message: 'Failed to get AI pricing advice.', type: 'error' });
+    } finally {
+      setAiPricingLoading(false);
     }
   };
 
@@ -168,13 +223,23 @@ const EditEvent: React.FC = () => {
 
             <div className="form-group">
               <label>Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows={4}
-                required
-              />
+              <div className="ai-generate-row">
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={4}
+                  required
+                />
+                <button
+                  type="button"
+                  className="ai-generate-btn"
+                  onClick={handleAiGenerate}
+                  disabled={aiGenerating}
+                >
+                  {aiGenerating ? '⏳ Generating...' : '✨ Generate with AI'}
+                </button>
+              </div>
             </div>
 
             <div className="form-row">
@@ -235,6 +300,37 @@ const EditEvent: React.FC = () => {
                 min="1"
                 required
               />
+            </div>
+
+            <div className="ai-pricing-section">
+              <div className="ai-pricing-header">
+                <h3>🧠 AI Smart Pricing Advisor</h3>
+                <p>Analyze demand, capacity, and similar events to optimize ticket pricing.</p>
+              </div>
+              <button
+                type="button"
+                className="ai-pricing-btn"
+                onClick={handleAiPricing}
+                disabled={aiPricingLoading}
+              >
+                {aiPricingLoading ? '⏳ Analyzing...' : '💡 Get AI Pricing Advice'}
+              </button>
+
+              {pricingAdvice && (
+                <div className={`ai-pricing-result risk-${pricingAdvice.riskLevel}`}>
+                  <div className="ai-pricing-top">
+                    <span className="ai-pricing-badge">🤖 Gemini Advice</span>
+                    <span className={`ai-pricing-risk risk-${pricingAdvice.riskLevel}`}>
+                      {pricingAdvice.riskLevel === 'high' ? '🔥 High Risk' : pricingAdvice.riskLevel === 'low' ? '✅ Low Risk' : '⚠️ Medium Risk'}
+                    </span>
+                  </div>
+                  <p className="ai-pricing-advice">{pricingAdvice.advice}</p>
+                  <div className="ai-pricing-recommendation">
+                    <span>Recommended Price:</span>
+                    <strong>${pricingAdvice.recommendedPrice}</strong>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="form-actions">

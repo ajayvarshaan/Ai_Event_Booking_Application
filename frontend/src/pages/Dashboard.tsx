@@ -1,8 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { bookingAPI } from '../services/api';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { bookingAPI, eventAPI } from '../services/api';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  FaUsers, FaMoneyBillWave, FaTicketAlt, FaChair, FaChartLine,
+  FaTimesCircle, FaMoneyBillAlt, FaSearch, FaMagic, FaGift,
+FaCheckCircle, FaExclamationCircle, FaUser, FaBolt,
+  FaFire, FaDollarSign, FaBalanceScale
+} from 'react-icons/fa';
 import './Dashboard.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface UserBookingStat {
   _id: string;
@@ -44,6 +53,20 @@ interface DashboardStats {
   totalRefundedAmount: number;
 }
 
+interface Event {
+  _id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  price: number;
+  capacity: number;
+  availableSeats: number;
+  image: string;
+}
+
 const Dashboard: React.FC = () => {
   const [userBookingStats, setUserBookingStats] = useState<UserBookingStat[]>([]);
   const [canceledBookingStats, setCanceledBookingStats] = useState<CanceledBookingStat[]>([]);
@@ -56,10 +79,14 @@ const Dashboard: React.FC = () => {
     totalCanceledBookings: 0,
     totalRefundedAmount: 0
   });
-  const [loading, setLoading] = useState(true);
+const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'revenue' | 'bookings' | 'name'>('revenue');
   const [activeTab, setActiveTab] = useState<'active' | 'canceled'>('active');
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [compareEvents, setCompareEvents] = useState<Event[]>([]);
+  const navigate = useNavigate();
+  const compareRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -116,21 +143,221 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    fetchStats();
+fetchStats();
+
+    // Fetch all events for comparison
+    const fetchEvents = async () => {
+      try {
+        const eventsRes = await eventAPI.getAll();
+        setAllEvents(eventsRes.data);
+      } catch (error) {
+        console.error('Failed to fetch events for comparison:', error);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const pageRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // 3D Tilt for stat cards
+  const handleStatMove = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    gsap.to(card, {
+      rotationX: ((y - centerY) / centerY) * -6,
+      rotationY: ((x - centerX) / centerX) * 6,
+      transformPerspective: 800,
+      scale: 1.03,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleStatLeave = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    gsap.to(card, {
+      rotationX: 0,
+      rotationY: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  }, []);
+
+  // Magnetic buttons
+  const handleMagneticMove = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    gsap.to(target, {
+      x: x * 0.25,
+      y: y * 0.25,
+      duration: 0.3,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleMagneticLeave = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    gsap.to(target, {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  }, []);
+
+// Click pulse
+  const handleClickPulse = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    gsap.fromTo(target,
+      { scale: 0.95 },
+      { scale: 1, duration: 0.4, ease: 'back.out(3)' }
+    );
+  }, []);
+
+  const getDemandRatio = (event: Event) => {
+    if (event.capacity <= 0) return 0;
+    return (event.capacity - event.availableSeats) / event.capacity;
+  };
+
+  const toggleCompareEvent = useCallback((event: Event) => {
+    setCompareEvents((prev) => {
+      const exists = prev.some((e) => e._id === event._id);
+      if (exists) {
+        return prev.filter((e) => e._id !== event._id);
+      }
+      if (prev.length >= 3) {
+        return prev;
+      }
+      return [...prev, event];
+    });
   }, []);
 
   useEffect(() => {
     if (!loading) {
-      gsap.fromTo('.stat-card',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out' }
-      );
-      gsap.fromTo('.booking-card',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: 'power3.out' }
-      );
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+        // Title entrance
+        if (titleRef.current) {
+          tl.fromTo(titleRef.current,
+            { opacity: 0, y: 40, scale: 0.9 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.7)' }
+          );
+        }
+
+        // Stat cards stagger entrance with rotation
+        tl.fromTo('.stat-card',
+          { opacity: 0, y: 50, scale: 0.85, rotationX: -15 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationX: 0,
+            duration: 0.7, stagger: 0.1, ease: 'back.out(1.7)',
+            transformPerspective: 800,
+            onComplete: () => {
+              // Animate stat numbers counting up
+              document.querySelectorAll('.stat-content h3').forEach((el: Element) => {
+                const target = el as HTMLElement;
+                const text = target.textContent || '0';
+                const match = text.match(/[\d,]+(?:\.\d+)?/);
+                if (match) {
+                  const prefix = text.includes('$') ? '$' : '';
+                  const finalValue = parseFloat(match[0].replace(/,/g, ''));
+                  const obj = { val: 0 };
+                  gsap.to(obj, {
+                    val: finalValue,
+                    duration: 1.5,
+                    ease: 'power2.out',
+                    onUpdate: () => {
+                      const formatted = obj.val >= 1000
+                        ? Math.round(obj.val).toLocaleString()
+                        : (finalValue % 1 !== 0 ? obj.val.toFixed(2) : Math.round(obj.val).toString());
+                      target.textContent = prefix + formatted;
+                    }
+                  });
+                }
+              });
+            }
+          }
+        );
+
+        // Search & filter section
+        gsap.fromTo('.search-filter-section',
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: '.search-filter-section', start: 'top 90%' }
+          }
+        );
+
+        // Tab navigation
+        gsap.fromTo('.tab-navigation',
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1, y: 0, duration: 0.6, ease: 'power3.out',
+            scrollTrigger: { trigger: '.tab-navigation', start: 'top 90%' }
+          }
+        );
+
+        // Booking cards stagger reveal
+        gsap.fromTo('.booking-card',
+          { opacity: 0, y: 60, scale: 0.92, rotationY: -8 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0,
+            duration: 0.7, stagger: 0.1, ease: 'back.out(1.6)',
+            transformPerspective: 800,
+            scrollTrigger: { trigger: '.booking-details-list', start: 'top 85%' }
+          }
+        );
+
+// Quick actions stagger
+        gsap.fromTo('.action-btn',
+          { opacity: 0, y: 40, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1,
+            duration: 0.6, stagger: 0.12, ease: 'back.out(1.7)',
+            scrollTrigger: { trigger: '.quick-actions', start: 'top 85%' }
+          }
+        );
+
+        // Event comparison section reveal
+        gsap.fromTo('.event-compare-section',
+          { opacity: 0, y: 80 },
+          {
+            opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+            scrollTrigger: { trigger: '.event-compare-section', start: 'top 85%' }
+          }
+        );
+
+        // Compare picker chips
+        gsap.fromTo('.event-picker-chip',
+          { opacity: 0, y: 30, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.05, ease: 'back.out(1.6)',
+            scrollTrigger: { trigger: '.event-picker', start: 'top 85%' }
+          }
+        );
+
+        // Compare cards flip entrance
+        gsap.fromTo('.event-compare-card',
+          { opacity: 0, y: 80, scale: 0.88, rotationY: -18 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.8, stagger: 0.12,
+            ease: 'back.out(1.6)', transformPerspective: 900,
+            scrollTrigger: { trigger: '.compare-cards-grid', start: 'top 85%' }
+          }
+        );
+      }, pageRef);
+
+      return () => ctx.revert();
     }
-  }, [loading, userBookingStats, canceledBookingStats]);
+  }, [loading, userBookingStats, canceledBookingStats, activeTab]);
 
   const getFilteredAndSortedData = () => {
     const data = activeTab === 'active' ? userBookingStats : canceledBookingStats;
@@ -163,64 +390,64 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" ref={pageRef}>
       <div className="container">
-        <h1 className="dashboard-title">📊 Admin Dashboard</h1>
+        <h1 className="dashboard-title" ref={titleRef}><FaChartLine style={{ marginRight: '12px' }} /> Admin Dashboard</h1>
         
         {/* Summary Stats */}
         <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">👥</div>
+          <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaUsers /></div>
             <div className="stat-content">
-              <h3>{dashboardStats.totalUsers}</h3>
+              <h3 data-value={dashboardStats.totalUsers}>{dashboardStats.totalUsers}</h3>
               <p>Total Users Booked</p>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">💰</div>
+          <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaMoneyBillWave /></div>
             <div className="stat-content">
-              <h3>${dashboardStats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+              <h3 data-value={dashboardStats.totalRevenue}>${dashboardStats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p>Total Revenue</p>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">🎫</div>
+          <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaTicketAlt /></div>
             <div className="stat-content">
-              <h3>{dashboardStats.totalBookings}</h3>
+              <h3 data-value={dashboardStats.totalBookings}>{dashboardStats.totalBookings}</h3>
               <p>Total Bookings</p>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">💺</div>
+          <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaChair /></div>
             <div className="stat-content">
-              <h3>{dashboardStats.totalSeats}</h3>
+              <h3 data-value={dashboardStats.totalSeats}>{dashboardStats.totalSeats}</h3>
               <p>Total Seats Booked</p>
             </div>
           </div>
 
-          <div className="stat-card">
-            <div className="stat-icon">📈</div>
+          <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaChartLine /></div>
             <div className="stat-content">
-              <h3>${dashboardStats.averageSpentPerUser.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+              <h3 data-value={dashboardStats.averageSpentPerUser}>${dashboardStats.averageSpentPerUser.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p>Avg. Per User</p>
             </div>
           </div>
 
-          <div className="stat-card stat-card-canceled">
-            <div className="stat-icon">❌</div>
+          <div className="stat-card stat-card-canceled" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaTimesCircle /></div>
             <div className="stat-content">
-              <h3>{dashboardStats.totalCanceledBookings}</h3>
+              <h3 data-value={dashboardStats.totalCanceledBookings}>{dashboardStats.totalCanceledBookings}</h3>
               <p>Canceled Bookings</p>
             </div>
           </div>
 
-          <div className="stat-card stat-card-refund">
-            <div className="stat-icon">💸</div>
+          <div className="stat-card stat-card-refund" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
+            <div className="stat-icon"><FaMoneyBillAlt /></div>
             <div className="stat-content">
-              <h3>${dashboardStats.totalRefundedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+              <h3 data-value={dashboardStats.totalRefundedAmount}>${dashboardStats.totalRefundedAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p>Total Refunded</p>
             </div>
           </div>
@@ -229,9 +456,10 @@ const Dashboard: React.FC = () => {
         {/* Search and Filter Section */}
         <div className="search-filter-section">
           <div className="search-box">
+            <FaSearch className="dashboard-search-icon" />
             <input
               type="text"
-              placeholder="🔍 Search by name or email..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -240,21 +468,27 @@ const Dashboard: React.FC = () => {
           <div className="filter-buttons">
             <button
               className={`filter-btn ${sortBy === 'revenue' ? 'active' : ''}`}
-              onClick={() => setSortBy('revenue')}
+              onClick={(e) => { handleClickPulse(e); setSortBy('revenue'); }}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
             >
-              💰 By Revenue
+              <FaMoneyBillWave style={{ marginRight: '6px' }} /> By Revenue
             </button>
             <button
               className={`filter-btn ${sortBy === 'bookings' ? 'active' : ''}`}
-              onClick={() => setSortBy('bookings')}
+              onClick={(e) => { handleClickPulse(e); setSortBy('bookings'); }}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
             >
-              🎫 By Bookings
+              <FaTicketAlt style={{ marginRight: '6px' }} /> By Bookings
             </button>
             <button
               className={`filter-btn ${sortBy === 'name' ? 'active' : ''}`}
-              onClick={() => setSortBy('name')}
+              onClick={(e) => { handleClickPulse(e); setSortBy('name'); }}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
             >
-              👤 By Name
+              <FaUser style={{ marginRight: '6px' }} /> By Name
             </button>
           </div>
         </div>
@@ -263,21 +497,25 @@ const Dashboard: React.FC = () => {
         <div className="tab-navigation">
           <button
             className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
-            onClick={() => setActiveTab('active')}
+            onClick={(e) => { handleClickPulse(e); setActiveTab('active'); }}
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
           >
-            ✅ Active Bookings ({userBookingStats.length})
+            <FaCheckCircle style={{ marginRight: '6px' }} /> Active Bookings ({userBookingStats.length})
           </button>
           <button
             className={`tab-btn ${activeTab === 'canceled' ? 'active' : ''}`}
-            onClick={() => setActiveTab('canceled')}
+            onClick={(e) => { handleClickPulse(e); setActiveTab('canceled'); }}
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
           >
-            ❌ Canceled Bookings ({canceledBookingStats.length})
+            <FaExclamationCircle style={{ marginRight: '6px' }} /> Canceled Bookings ({canceledBookingStats.length})
           </button>
         </div>
 
         {/* User Booking Details with Event Information */}
         <div className="user-booking-details-section">
-          <h2>{activeTab === 'active' ? '✅ Active Bookings' : '❌ Canceled Bookings'} ({filteredData.length})</h2>
+          <h2>{activeTab === 'active' ? <><FaCheckCircle style={{ marginRight: '8px' }} /> Active Bookings</> : <><FaExclamationCircle style={{ marginRight: '8px' }} /> Canceled Bookings</>} ({filteredData.length})</h2>
           
           {filteredData.length === 0 ? (
             <div className="no-bookings">
@@ -294,14 +532,14 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="user-basic-info">
                       <h3>{userStat.userName}</h3>
-                      <p className="user-email">📧 {userStat.userEmail}</p>
+                      <p className="user-email"><FaUser style={{ marginRight: '6px' }} /> {userStat.userEmail}</p>
                     </div>
                   </div>
 
                   {/* Events List */}
                   <div className="events-section">
                     <h4 className="events-title">
-                      {activeTab === 'active' ? '🎉 Booked Events' : '❌ Canceled Events'}
+                      {activeTab === 'active' ? <><FaGift style={{ marginRight: '6px' }} /> Booked Events</> : <><FaExclamationCircle style={{ marginRight: '6px' }} /> Canceled Events</>}
                     </h4>
                     {userStat.events.map((event, idx) => (
                       <div key={idx} className={`event-booking-card ${activeTab === 'canceled' ? 'canceled' : ''}`}>
@@ -358,20 +596,98 @@ const Dashboard: React.FC = () => {
           )}
         </div>
 
+{/* Event Comparison Section */}
+        <div className="event-compare-section" ref={compareRef}>
+          <div className="edit-compare-header">
+<span className="edit-compare-kicker"><FaBalanceScale style={{ marginRight: '6px' }} /> Event Comparison</span>
+            <h2><FaBalanceScale style={{ marginRight: '8px' }} /> Compare Events Side By Side</h2>
+            <p>Select up to 3 events to compare price, capacity, demand, and seat availability.</p>
+          </div>
+
+          {/* Event selector */}
+          <div className="event-picker">
+            {allEvents.length === 0 ? (
+              <p className="compare-no-events">No events available to compare.</p>
+            ) : (
+              allEvents.map((event) => {
+                const isSelected = compareEvents.some((e) => e._id === event._id);
+                return (
+                  <button
+                    key={event._id}
+                    className={`event-picker-chip ${isSelected ? 'selected' : ''}`}
+                    onClick={(e) => { handleClickPulse(e); toggleCompareEvent(event); }}
+                    onMouseMove={handleMagneticMove}
+                    onMouseLeave={handleMagneticLeave}
+                  >
+                    {isSelected ? '✓ ' : '+ '}{event.title}
+                  </button>
+                );
+              })
+            )}
+          </div>
+
+          {/* Comparison cards */}
+          {compareEvents.length > 0 && (
+            <div className="compare-cards-grid">
+              {compareEvents.map((event) => (
+                <div key={event._id} className="event-compare-card">
+                  <div className="event-compare-card-head">
+                    <span className="event-compare-cat">{event.category}</span>
+                    <button
+                      className="event-compare-remove"
+                      onClick={(e) => { handleClickPulse(e); toggleCompareEvent(event); }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <h3>{event.title}</h3>
+                  <p>{new Date(event.date).toLocaleDateString()} • {event.time}</p>
+
+                  <div className="event-compare-rows">
+                    <div className="event-compare-row">
+                      <span><FaDollarSign /> Price</span>
+                      <strong>${event.price}</strong>
+                    </div>
+                    <div className="event-compare-row">
+                      <span><FaChair /> Seats Left</span>
+                      <strong>{event.availableSeats} / {event.capacity}</strong>
+                    </div>
+                    <div className="event-compare-row">
+                      <span><FaFire /> Demand</span>
+                      <strong>{Math.round(getDemandRatio(event) * 100)}%</strong>
+                    </div>
+                  </div>
+
+                  <div className="event-demand-meter">
+                    <div
+                      className="event-demand-fill"
+                      style={{ width: `${Math.min(Math.round(getDemandRatio(event) * 100), 100)}%` }}
+                    ></div>
+                  </div>
+
+                  <button className="btn-primary" onClick={() => navigate(`/edit-event/${event._id}`)}>
+                    Manage Event
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Quick Actions */}
         <div className="quick-actions">
-          <h2>⚡ Quick Actions</h2>
+          <h2><FaBolt style={{ marginRight: '8px' }} /> Quick Actions</h2>
           <div className="action-buttons">
-            <Link to="/create-event" className="action-btn">
-              <span className="action-icon">✨</span>
+            <Link to="/create-event" className="action-btn" onMouseMove={handleMagneticMove} onMouseLeave={handleMagneticLeave}>
+              <span className="action-icon"><FaMagic /></span>
               <span>Create Event</span>
             </Link>
-            <Link to="/home" className="action-btn">
-              <span className="action-icon">🎉</span>
+            <Link to="/home" className="action-btn" onMouseMove={handleMagneticMove} onMouseLeave={handleMagneticLeave}>
+              <span className="action-icon"><FaGift /></span>
               <span>View Events</span>
             </Link>
-            <Link to="/activity-log" className="action-btn">
-              <span className="action-icon">📊</span>
+            <Link to="/activity-log" className="action-btn" onMouseMove={handleMagneticMove} onMouseLeave={handleMagneticLeave}>
+              <span className="action-icon"><FaChartLine /></span>
               <span>Activity Log</span>
             </Link>
           </div>

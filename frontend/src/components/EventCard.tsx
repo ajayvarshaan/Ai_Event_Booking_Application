@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import Countdown from './Countdown';
 import WishlistButton from './WishlistButton';
+import { FaMusic, FaFutbol, FaLaptopCode, FaBriefcase, FaGift, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFire } from 'react-icons/fa';
 import './EventCard.css';
 
 interface EventCardProps {
@@ -38,17 +39,19 @@ const EventCard: React.FC<EventCardProps> = ({
   isAdmin
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [key, setKey] = useState(0);
 
   useEffect(() => {
     if (cardRef.current) {
       gsap.fromTo(cardRef.current,
-        { opacity: 0, y: 40 },
+        { opacity: 0, y: 40, scale: 0.9 },
         { 
           opacity: 1, 
           y: 0, 
-          duration: 0.6, 
-          ease: 'power3.out'
+          scale: 1, 
+          duration: 0.8, 
+          ease: 'back.out(1.7)'
         }
       );
     }
@@ -59,15 +62,115 @@ const EventCard: React.FC<EventCardProps> = ({
     setKey(prev => prev + 1);
   }, [event.date]);
 
+  // 3D Tilt effect on card hover
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const card = cardRef.current;
+    const image = imageRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+
+    gsap.to(card, {
+      rotationX: rotateX,
+      rotationY: rotateY,
+      transformPerspective: 1000,
+      scale: 1.02,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+
+    // Parallax effect on image
+    if (image) {
+      gsap.to(image, {
+        x: (x - centerX) * 0.05,
+        y: (y - centerY) * 0.05,
+        scale: 1.12,
+        duration: 0.5,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      });
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current;
+    const image = imageRef.current;
+    if (!card) return;
+
+    gsap.to(card, {
+      rotationX: 0,
+      rotationY: 0,
+      scale: 1,
+      duration: 0.8,
+      ease: 'elastic.out(1, 0.5)'
+    });
+
+    if (image) {
+      gsap.to(image, {
+        x: 0,
+        y: 0,
+        scale: 1.1,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.5)',
+        overwrite: 'auto'
+      });
+    }
+  }, []);
+
+  // Magnetic button effect
+  const handleMagneticMove = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(target, {
+      x: x * 0.25,
+      y: y * 0.25,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleMagneticLeave = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    gsap.to(target, {
+      x: 0,
+      y: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  }, []);
+
+  // Button click pulse animation
+  const handleClickPulse = useCallback((e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    gsap.fromTo(target,
+      { scale: 0.95 },
+      {
+        scale: 1,
+        duration: 0.4,
+        ease: 'back.out(3)'
+      }
+    );
+  }, []);
+
   const getCategoryIcon = (category: string) => {
-    const icons: { [key: string]: string } = {
-      music: '🎵',
-      sports: '⚽',
-      tech: '💻',
-      business: '💼',
-      other: '🎉'
+    const icons: { [key: string]: React.ReactNode } = {
+      music: <FaMusic />,
+      sports: <FaFutbol />,
+      tech: <FaLaptopCode />,
+      business: <FaBriefcase />,
+      other: <FaGift />
     };
-    return icons[category] || '🎉';
+    return icons[category] || <FaGift />;
   };
 
   const getCapacityPercentage = () => {
@@ -86,17 +189,29 @@ const EventCard: React.FC<EventCardProps> = ({
   };
 
   return (
-    <div ref={cardRef} className="event-card card">
+    <div 
+      ref={cardRef} 
+      className="event-card card"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ transformStyle: 'preserve-3d' }}
+    >
       <div className="event-image-container">
         <div className="event-category-badge">
           {getCategoryIcon(event.category)} {event.category}
         </div>
         {isAlmostFull() && (
           <div className="almost-full-badge">
-            🔥 Almost Full!
+            <FaFire style={{ marginRight: '4px' }} /> Almost Full!
           </div>
         )}
-        <img src={event.image} alt={event.title} className="event-image" />
+        <img 
+          ref={imageRef}
+          src={event.image} 
+          alt={event.title} 
+          className="event-image" 
+        />
+        <div className="event-image-overlay"></div>
         <div className="wishlist-overlay">
           <WishlistButton eventId={event._id} onWishlistChange={onWishlistChange} />
         </div>
@@ -108,9 +223,9 @@ const EventCard: React.FC<EventCardProps> = ({
       <Countdown key={`countdown-${event._id}-${key}`} targetDate={event.date} />
       
       <div className="event-details">
-        <span>📅 {new Date(event.date).toLocaleDateString()}</span>
-        <span>🕐 {event.time}</span>
-        <span>📍 {event.location}</span>
+        <span><FaCalendarAlt style={{ marginRight: '8px' }} /> {new Date(event.date).toLocaleDateString()}</span>
+        <span><FaClock style={{ marginRight: '8px' }} /> {event.time}</span>
+        <span><FaMapMarkerAlt style={{ marginRight: '8px' }} /> {event.location}</span>
       </div>
       
       <div className="capacity-section">
@@ -142,12 +257,25 @@ const EventCard: React.FC<EventCardProps> = ({
             {onToggleCompare && (
               <button
                 className={`btn-secondary compare-btn ${isCompared ? 'active' : ''}`}
-                onClick={() => onToggleCompare(event)}
+                onClick={(e) => {
+                  handleClickPulse(e);
+                  onToggleCompare(event);
+                }}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
               >
                 {isCompared ? 'Compared' : 'Compare'}
               </button>
             )}
-            <button className="btn-primary" onClick={() => onBook(event._id)}>
+            <button 
+              className="btn-primary" 
+              onClick={(e) => {
+                handleClickPulse(e);
+                onBook(event._id);
+              }}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               Book Now
             </button>
           </>
@@ -156,21 +284,50 @@ const EventCard: React.FC<EventCardProps> = ({
             {onToggleCompare && (
               <button
                 className={`btn-secondary compare-btn ${isCompared ? 'active' : ''}`}
-                onClick={() => onToggleCompare(event)}
+                onClick={(e) => {
+                  handleClickPulse(e);
+                  onToggleCompare(event);
+                }}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
               >
                 {isCompared ? 'Compared' : 'Compare'}
               </button>
             )}
-            <button className="btn-primary" onClick={() => onBook(event._id)}>
+            <button 
+              className="btn-primary" 
+              onClick={(e) => {
+                handleClickPulse(e);
+                onBook(event._id);
+              }}
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               Book Now
             </button>
             {onEdit && (
-              <button className="btn-secondary" onClick={() => onEdit(event._id)}>
+              <button 
+                className="btn-secondary" 
+                onClick={(e) => {
+                  handleClickPulse(e);
+                  onEdit(event._id);
+                }}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
                 Edit
               </button>
             )}
             {onDelete && (
-              <button className="btn-danger" onClick={() => onDelete(event._id)}>
+              <button 
+                className="btn-danger" 
+                onClick={(e) => {
+                  handleClickPulse(e);
+                  onDelete(event._id);
+                }}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
                 Delete
               </button>
             )}

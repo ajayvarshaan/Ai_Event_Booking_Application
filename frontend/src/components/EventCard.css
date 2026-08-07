@@ -15,6 +15,78 @@
     0 -1px 0 rgba(0, 0, 0, 0.05) inset;
   height: 100%;
   padding: 0;
+  will-change: transform;
+  animation: floatIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-style: preserve-3d;
+}
+
+@keyframes floatIn {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) scale(0.85) rotateX(-12deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.02) rotateX(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
+  }
+}
+
+/* Continuous gentle float on hover */
+.event-card:hover {
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0) scale(1.02); }
+  50% { transform: translateY(-6px) scale(1.03); }
+}
+
+/* Premium card glow on hover */
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(102, 126, 234, 0.08) 50%,
+    transparent 70%
+  );
+  animation: cardShine 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 12;
+}
+
+@keyframes cardShine {
+  0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Card top accent line */
+.event-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #ff0099, #00c8ff, #667eea);
+  background-size: 300% 100%;
+  animation: cardAccentFlow 6s linear infinite;
+  z-index: 13;
+  border-radius: 24px 24px 0 0;
+}
+
+@keyframes cardAccentFlow {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
 }
 
 .event-image-container {
@@ -22,6 +94,25 @@
   width: 100%;
   height: 240px;
   overflow: hidden;
+}
+
+/* Image overlay gradient */
+.event-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(15, 12, 41, 0.6) 100%
+  );
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.event-card:hover .event-image-overlay {
+  opacity: 1;
 }
 
 .wishlist-overlay {
@@ -49,6 +140,14 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.event-card:hover .event-category-badge {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 243, 255, 0.98) 100%);
+  box-shadow: 
+    0 8px 24px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .almost-full-badge {
@@ -79,6 +178,8 @@
   border-color: rgba(102, 126, 234, 0.6);
   box-shadow: 
     0 30px 80px rgba(102, 126, 234, 0.4),
+    0 0 40px rgba(255, 0, 150, 0.1),
+    0 0 40px rgba(0, 200, 255, 0.1),
     0 1px 0 rgba(255, 255, 255, 1) inset,
     0 -1px 0 rgba(0, 0, 0, 0.05) inset;
 }
@@ -90,6 +191,7 @@
   border-radius: 0;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  will-change: transform;
 }
 
 .event-card:hover .event-image {
@@ -108,6 +210,14 @@
   min-height: 68px;
   display: flex;
   align-items: center;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover h3 {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .event-card .description {
@@ -136,12 +246,31 @@
   box-shadow: 
     inset 0 2px 8px rgba(102, 126, 234, 0.1),
     inset 0 -1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.event-card:hover .event-details {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+  border: 1px solid rgba(102, 126, 234, 0.15);
 }
 
 .event-details span {
   display: flex;
   align-items: center;
   gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover .event-details span:nth-child(1) {
+  transform: translateX(4px);
+}
+
+.event-card:hover .event-details span:nth-child(2) {
+  transform: translateX(8px);
+}
+
+.event-card:hover .event-details span:nth-child(3) {
+  transform: translateX(12px);
 }
 
 .event-footer {
@@ -197,6 +326,29 @@
     0 2px 8px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4),
     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.capacity-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: capacityShimmer 2s ease-in-out infinite;
+}
+
+@keyframes capacityShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .event-actions {
@@ -212,6 +364,7 @@
   font-size: 15px;
   font-weight: 700;
   border-radius: 12px;
+  will-change: transform;
 }
 
 .event-actions .w-full {
@@ -282,6 +435,14 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -1px;
+  transition: all 0.3s ease;
+}
+
+.event-card:hover .price {
+  background: linear-gradient(135deg, #ff0099 0%, #7928ca 50%, #00c8ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .seats {
@@ -295,4 +456,79 @@
   box-shadow: 
     inset 0 2px 4px rgba(102, 126, 234, 0.1),
     inset 0 -1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .event-image-container,
+  .event-image {
+    height: 200px;
+  }
+
+  .event-card h3 {
+    font-size: 22px;
+    padding: 0 18px;
+    min-height: 56px;
+  }
+
+  .event-card .description {
+    font-size: 14px;
+    padding: 0 18px;
+  }
+
+  .event-details {
+    padding: 14px 18px;
+    margin: 0 18px;
+  }
+
+  .event-footer {
+    padding: 16px 18px;
+  }
+
+  .event-actions {
+    padding: 0 18px 18px 18px;
+  }
+
+  .event-actions button {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-image-container,
+  .event-image {
+    height: 170px;
+  }
+
+  .event-card h3 {
+    font-size: 20px;
+    min-height: 48px;
+  }
+
+  .event-category-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .almost-full-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .event-actions {
+    flex-wrap: wrap;
+  }
+
+  .event-actions button {
+    flex: 1 1 100%;
+  }
+
+  .price {
+    font-size: 24px;
+  }
 }

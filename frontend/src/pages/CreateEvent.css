@@ -1,7 +1,12 @@
+/* ============================================
+   UNIFIED CREATE/EDIT EVENT - Dark Glassmorphism
+   ============================================ */
+
 .create-event {
   min-height: 100vh;
   padding: 40px 20px;
-  background: linear-gradient(180deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  background-attachment: fixed;
 }
 
 .create-event h1 {
@@ -18,10 +23,11 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 50px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
 }
 
 .event-form form {
@@ -38,7 +44,7 @@
 
 .image-preview-section label {
   font-weight: 700;
-  color: #1a202c;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 15px;
   letter-spacing: 0.3px;
 }
@@ -46,10 +52,10 @@
 .image-preview {
   width: 100%;
   height: 300px;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  border: 2px solid rgba(102, 126, 234, 0.2);
-  background: #f7fafc;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  background: rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,14 +86,14 @@
 
 .form-group label {
   font-weight: 700;
-  color: #1a202c;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 15px;
   letter-spacing: 0.3px;
 }
 
 .form-hint {
   font-size: 13px;
-  color: #4a5568;
+  color: rgba(255, 255, 255, 0.5);
   font-style: italic;
   margin-top: -5px;
 }
@@ -97,11 +103,13 @@
 .form-group select {
   padding: 14px 18px;
   border: 2px solid rgba(102, 126, 234, 0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   font-family: inherit;
   font-weight: 500;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a202c;
 }
 
 .form-group input:focus,
@@ -119,14 +127,14 @@
 }
 
 .error-message {
-  background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
-  color: #c53030;
+  background: rgba(245, 101, 101, 0.15);
+  color: #fc8181;
   padding: 16px 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 20px;
   font-size: 15px;
   font-weight: 600;
-  border: 1px solid #fc8181;
+  border: 1px solid rgba(245, 101, 101, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -147,6 +155,43 @@
   }
 }
 
+.ai-generate-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.ai-generate-row textarea {
+  flex: 1;
+}
+
+.ai-generate-btn {
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  box-shadow:
+    0 6px 18px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.ai-generate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 24px rgba(102, 126, 234, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.ai-generate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .form-actions {
   display: flex;
   gap: 15px;
@@ -156,4 +201,137 @@
 .form-actions button {
   flex: 1;
   padding: 14px 28px;
+}
+
+/* AI Smart Pricing Advisor */
+.ai-pricing-section {
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 14px;
+  padding: 25px;
+  margin-top: 10px;
+}
+
+.ai-pricing-header h3 {
+  font-size: 18px;
+  color: #ffffff;
+  font-weight: 800;
+  margin: 0 0 6px 0;
+}
+
+.ai-pricing-header p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 18px 0;
+}
+
+.ai-pricing-btn {
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.ai-pricing-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(102, 126, 234, 0.55);
+}
+
+.ai-pricing-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-pricing-result {
+  margin-top: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-left: 5px solid #667eea;
+}
+
+.ai-pricing-result.risk-high {
+  border-left-color: #f56565;
+}
+
+.ai-pricing-result.risk-medium {
+  border-left-color: #ed8936;
+}
+
+.ai-pricing-result.risk-low {
+  border-left-color: #48bb78;
+}
+
+.ai-pricing-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-pricing-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c7d2fe;
+  background: rgba(102, 126, 234, 0.15);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.ai-pricing-risk {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.ai-pricing-risk.risk-high {
+  background: rgba(245, 101, 101, 0.15);
+  color: #fc8181;
+}
+
+.ai-pricing-risk.risk-medium {
+  background: rgba(237, 137, 54, 0.15);
+  color: #f6ad55;
+}
+
+.ai-pricing-risk.risk-low {
+  background: rgba(72, 187, 120, 0.15);
+  color: #9ae6b4;
+}
+
+.ai-pricing-advice {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin: 0 0 14px 0;
+}
+
+.ai-pricing-recommendation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+.ai-pricing-recommendation strong {
+  font-size: 22px;
+  color: #ffffff;
+  font-weight: 900;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

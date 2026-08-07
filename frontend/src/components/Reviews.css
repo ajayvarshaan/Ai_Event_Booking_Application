@@ -1,9 +1,15 @@
+/* ============================================
+   UNIFIED REVIEWS - Dark Glassmorphism
+   ============================================ */
+
 .reviews-section {
-  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(30px);
+  border-radius: 20px;
   padding: 30px;
   margin-top: 40px;
-  border: 2px solid #e1e8ed;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
 }
 
 .reviews-header {
@@ -17,7 +23,7 @@
 
 .reviews-header h3 {
   font-size: 24px;
-  color: #2d3748;
+  color: #ffffff;
   font-weight: 800;
   margin: 0;
 }
@@ -33,10 +39,11 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: white;
+  background: rgba(255, 255, 255, 0.1);
   padding: 15px 25px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .rating-number {
@@ -66,7 +73,7 @@
 
 .total-reviews {
   font-size: 13px;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 600;
 }
 
@@ -76,7 +83,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -91,12 +98,12 @@
 }
 
 .review-form {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   padding: 25px;
   margin-bottom: 30px;
-  border: 2px solid #e1e8ed;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .form-group {
@@ -107,7 +114,7 @@
   display: block;
   font-size: 14px;
   font-weight: 700;
-  color: #2d3748;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -121,13 +128,13 @@
 .star-btn {
   width: 50px;
   height: 50px;
-  border: 2px solid #e1e8ed;
-  background: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #cbd5e0;
+  color: rgba(255, 255, 255, 0.3);
 }
 
 .star-btn:hover {
@@ -146,13 +153,15 @@
 .form-group textarea {
   width: 100%;
   padding: 15px;
-  border: 2px solid #e1e8ed;
-  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
   font-size: 14px;
   font-family: inherit;
   resize: vertical;
   min-height: 120px;
   transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a202c;
 }
 
 .form-group textarea:focus {
@@ -164,7 +173,7 @@
 .char-count {
   display: block;
   font-size: 12px;
-  color: #a0aec0;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 8px;
   text-align: right;
 }
@@ -179,7 +188,7 @@
 .btn-submit {
   padding: 12px 24px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -187,12 +196,12 @@
 }
 
 .btn-cancel {
-  background: #e1e8ed;
-  color: #2d3748;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .btn-cancel:hover {
-  background: #cbd5e0;
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .btn-submit {
@@ -218,17 +227,17 @@
 }
 
 .review-card {
-  background: white;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
   padding: 20px;
-  border: 1px solid #e1e8ed;
+  border: 1px solid rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .review-card:hover {
-  border-color: #cbd5e0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
   transform: translateY(-2px);
 }
 
@@ -238,7 +247,7 @@
   align-items: flex-start;
   margin-bottom: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #e1e8ed;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.15);
 }
 
 .reviewer-info {
@@ -259,6 +268,7 @@
   font-weight: 700;
   font-size: 18px;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .reviewer-info h4 {
@@ -289,18 +299,165 @@
 .no-reviews {
   text-align: center;
   padding: 40px 20px;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 15px;
 }
 
 .reviews-loading {
   text-align: center;
   padding: 40px 20px;
-  color: #718096;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 15px;
 }
 
+/* AI Review Summarizer */
+.ai-summarize-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-ai-summarize {
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-ai-summarize:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(102, 126, 234, 0.55);
+}
+
+.btn-ai-summarize:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-summarize-hint {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.ai-review-summary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 14px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.ai-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ai-summary-badge {
+  font-size: 13px;
+  font-weight: 700;
+  color: #c7d2fe;
+  background: rgba(102, 126, 234, 0.15);
+  padding: 5px 14px;
+  border-radius: 8px;
+}
+
+.ai-summary-sentiment {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 8px;
+}
+
+.ai-summary-sentiment.sentiment-positive {
+  background: rgba(72, 187, 120, 0.15);
+  color: #9ae6b4;
+}
+
+.ai-summary-sentiment.sentiment-negative {
+  background: rgba(245, 101, 101, 0.15);
+  color: #fc8181;
+}
+
+.ai-summary-sentiment.sentiment-mixed {
+  background: rgba(237, 137, 54, 0.15);
+  color: #f6ad55;
+}
+
+.ai-summary-sentiment.sentiment-neutral {
+  background: rgba(113, 128, 150, 0.15);
+  color: #a0aec0;
+}
+
+.ai-summary-text {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+  margin: 0 0 18px 0;
+  font-weight: 500;
+}
+
+.ai-summary-points {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.ai-summary-positive,
+.ai-summary-negative {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-summary-positive strong {
+  color: #9ae6b4;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.ai-summary-negative strong {
+  color: #fc8181;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.ai-summary-positive ul,
+.ai-summary-negative ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-summary-positive li,
+.ai-summary-negative li {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
 @media (max-width: 768px) {
+  .ai-summary-points {
+    grid-template-columns: 1fr;
+  }
+
   .reviews-header {
     flex-direction: column;
     align-items: flex-start;

@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { eventAPI, bookingAPI } from '../services/api';
-import { fadeInUp, scaleIn } from '../animations/gsapAnimations';
+import { eventAPI, bookingAPI, aiAPI } from '../services/api';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Toast from '../components/Toast';
+import Reviews from '../components/Reviews';
 import './Booking.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Event {
   _id: string;
@@ -24,6 +28,8 @@ const Booking: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [booking, setBooking] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [aiAssistant, setAiAssistant] = useState<{ message: string; tips: string[] } | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const navigate = useNavigate();
   const formRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -43,12 +49,75 @@ const Booking: React.FC = () => {
     fetchEvent();
   }, [eventId]);
 
-  useEffect(() => {
+useEffect(() => {
     if (!loading) {
-      fadeInUp(titleRef.current);
-      scaleIn(formRef.current);
+      // Title char-by-char reveal
+      if (titleRef.current) {
+        const chars = Array.from(titleRef.current.textContent || '');
+        titleRef.current.textContent = '';
+        chars.forEach((char, i) => {
+          const span = document.createElement('span');
+          span.style.display = 'inline-block';
+          span.style.marginRight = char === ' ' ? '0.25em' : '0';
+          span.style.opacity = '0';
+          span.style.transform = 'translateY(40px) rotateX(60deg)';
+          span.style.transformStyle = 'preserve-3d';
+          span.textContent = char === ' ' ? '\u00A0' : char;
+          titleRef.current?.appendChild(span);
+          gsap.to(span, {
+            opacity: 1, y: 0, rotationX: 0, duration: 0.6, delay: i * 0.025, ease: 'back.out(1.8)'
+          });
+        });
+      }
+
+      // Booking form 3D scale entrance with rotation
+      if (formRef.current) {
+        gsap.fromTo(formRef.current,
+          { opacity: 0, y: 60, scale: 0.85, rotationY: -14 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.9, ease: 'back.out(1.7)',
+            transformPerspective: 900
+          }
+        );
+      }
+
+      // Event info slide in from left
+      const infoEl = document.querySelector('.event-info');
+      if (infoEl) {
+        gsap.fromTo(infoEl,
+          { opacity: 0, x: -80, scale: 0.95 },
+          { opacity: 1, x: 0, scale: 1, duration: 0.9, ease: 'power3.out', delay: 0.2 }
+        );
+      }
     }
   }, [loading]);
+
+  // 3D tilt on booking form
+  const handleFormMove = useCallback((e: React.MouseEvent) => {
+    const el = formRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    gsap.to(el, {
+      rotationX: ((y - centerY) / centerY) * -5,
+      rotationY: ((x - centerX) / centerX) * 5,
+      transformPerspective: 900,
+      scale: 1.02,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleFormLeave = useCallback(() => {
+    const el = formRef.current;
+    if (!el) return;
+    gsap.to(el, {
+      rotationX: 0, rotationY: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.5)'
+    });
+  }, []);
 
   const handleBooking = async () => {
     if (!event) return;
@@ -62,6 +131,22 @@ const Booking: React.FC = () => {
       console.error('Booking failed:', error);
       setToast({ message: 'Booking failed. Please try again.', type: 'error' });
       setBooking(false);
+    }
+  };
+
+  const handleAiAssistant = async () => {
+    if (!event || aiLoading) return;
+
+    setAiLoading(true);
+    setAiAssistant(null);
+    try {
+      const response = await aiAPI.bookingAssistant(event._id, seats);
+      setAiAssistant(response.data);
+    } catch (error) {
+      console.error('AI booking assistant error:', error);
+      setToast({ message: 'Failed to generate AI assistant tips.', type: 'error' });
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -95,7 +180,7 @@ const Booking: React.FC = () => {
             </div>
           </div>
 
-          <div ref={formRef} className="booking-form card">
+<div ref={formRef} className="booking-form card" onMouseMove={handleFormMove} onMouseLeave={handleFormLeave}>
             <h3>Complete Your Booking</h3>
             <div className="form-group">
               <label>Number of Seats</label>
@@ -131,8 +216,39 @@ const Booking: React.FC = () => {
             >
               {booking ? 'Processing...' : 'Confirm Booking'}
             </button>
+
+            <div className="ai-assistant-section">
+              <button
+                className="btn-ai-assistant"
+                onClick={handleAiAssistant}
+                disabled={aiLoading}
+              >
+                {aiLoading ? '⏳ Gemini is preparing tips...' : '✨ AI Booking Assistant'}
+              </button>
+
+              {aiAssistant && (
+                <div className="ai-assistant-box">
+                  <div className="ai-assistant-header">
+                    <span className="ai-assistant-badge">🤖 Gemini Prep Guide</span>
+                  </div>
+                  <p className="ai-assistant-message">{aiAssistant.message}</p>
+                  {aiAssistant.tips.length > 0 && (
+                    <div className="ai-assistant-tips">
+                      <strong className="ai-assistant-tips-title">📋 Preparation Tips</strong>
+                      <ul>
+                        {aiAssistant.tips.map((tip, idx) => (
+                          <li key={idx}>{tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        <Reviews eventId={event._id} />
       </div>
     </div>
   );

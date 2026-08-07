@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { bookingAPI } from '../services/api';
-import { staggerFadeIn, fadeInUp } from '../animations/gsapAnimations';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { bookingAPI, aiAPI } from '../services/api';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
 import './MyBookings.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Booking {
   _id: string;
@@ -27,6 +30,8 @@ const MyBookings: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [aiLoadingFor, setAiLoadingFor] = useState<string | null>(null);
+  const [aiResults, setAiResults] = useState<{ [bookingId: string]: { message: string; tips: string[] } }>({});
   const bookingsRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -47,19 +52,71 @@ const MyBookings: React.FC = () => {
     fetchBookings();
   }, []);
 
+useEffect(() => {
+    if (titleRef.current) {
+      const dots = Array.from(titleRef.current.textContent || '');
+      titleRef.current.textContent = '';
+      const row = titleRef.current;
+      dots.forEach((char, i) => {
+        const span = document.createElement('span');
+        span.style.display = 'inline-block';
+        span.style.marginRight = char === ' ' ? '0.25em' : '0';
+        span.style.opacity = '0';
+        span.style.transform = 'translateY(40px) rotateX(60deg)';
+        span.style.transformStyle = 'preserve-3d';
+        span.textContent = char === ' ' ? '\u00A0' : char;
+        row.appendChild(span);
+        gsap.to(span, {
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          duration: 0.6,
+          delay: i * 0.03,
+          ease: 'back.out(1.8)'
+        });
+      });
+    }
+  }, []);
+
   useEffect(() => {
     if (!loading && bookingsRef.current) {
       const cards = bookingsRef.current.querySelectorAll('.booking-card');
       if (cards.length > 0) {
-        staggerFadeIn(cards, 0.15);
+        gsap.fromTo(cards,
+          { opacity: 0, y: 80, scale: 0.9, rotationY: -12 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0, duration: 0.8, stagger: 0.12,
+            ease: 'back.out(1.6)', transformPerspective: 800,
+            scrollTrigger: { trigger: bookingsRef.current, start: 'top 85%' }
+          }
+        );
       }
     }
   }, [loading, bookings]);
 
-  useEffect(() => {
-    if (titleRef.current) {
-      fadeInUp(titleRef.current);
-    }
+  // 3D tilt on booking card hover
+  const handleCardMove = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    gsap.to(card, {
+      rotationX: ((y - centerY) / centerY) * -5,
+      rotationY: ((x - centerX) / centerX) * 5,
+      transformPerspective: 900,
+      scale: 1.02,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }, []);
+
+  const handleCardLeave = useCallback((e: React.MouseEvent) => {
+    const card = e.currentTarget as HTMLElement;
+    gsap.to(card, {
+      rotationX: 0, rotationY: 0, scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.5)'
+    });
   }, []);
 
   const handleCancel = (bookingId: string) => {
@@ -80,6 +137,26 @@ const MyBookings: React.FC = () => {
       console.error('Failed to cancel booking:', error);
       setModalOpen(false);
       setToast({ message: 'Failed to cancel booking', type: 'error' });
+    }
+  };
+
+  const handleAiAssistant = async (booking: Booking) => {
+    if (!booking.event || aiLoadingFor) return;
+
+    setAiLoadingFor(booking._id);
+    setAiResults((prev) => {
+      const next = { ...prev };
+      delete next[booking._id];
+      return next;
+    });
+    try {
+      const response = await aiAPI.bookingAssistant(booking.event._id, booking.seats);
+      setAiResults((prev) => ({ ...prev, [booking._id]: response.data }));
+    } catch (error) {
+      console.error('AI booking assistant error:', error);
+      setToast({ message: 'Failed to generate AI assistant tips.', type: 'error' });
+    } finally {
+      setAiLoadingFor(null);
     }
   };
 
@@ -122,8 +199,8 @@ const MyBookings: React.FC = () => {
             {bookings.map((booking) => {
               // Safety check for deleted events
               if (!booking.event) {
-                return (
-                  <div key={booking._id} className="booking-card card deleted-event">
+return (
+                  <div key={booking._id} className="booking-card card deleted-event" onMouseMove={handleCardMove} onMouseLeave={handleCardLeave}>
                     <div className="booking-header">
                       <h3>⚠️ Event Deleted</h3>
                       <span className={`status ${booking.status}`}>{booking.status}</span>
@@ -145,8 +222,10 @@ const MyBookings: React.FC = () => {
                 );
               }
               
-              return (
-                <div key={booking._id} className="booking-card card">
+              const aiResult = aiResults[booking._id];
+              
+return (
+                <div key={booking._id} className="booking-card card" onMouseMove={handleCardMove} onMouseLeave={handleCardLeave}>
                   <div className="booking-header">
                     <h3>{booking.event.title}</h3>
                     <span className={`status ${booking.status}`}>{booking.status}</span>
@@ -176,12 +255,40 @@ const MyBookings: React.FC = () => {
                   </div>
 
                   {booking.status === 'confirmed' && (
-                    <button
-                      className="btn-secondary w-full"
-                      onClick={() => handleCancel(booking._id)}
-                    >
-                      Cancel Booking
-                    </button>
+                    <div className="booking-actions">
+                      <button
+                        className="btn-ai-assistant"
+                        onClick={() => handleAiAssistant(booking)}
+                        disabled={aiLoadingFor === booking._id}
+                      >
+                        {aiLoadingFor === booking._id ? '⏳ AI is preparing...' : '✨ AI Assistant'}
+                      </button>
+                      <button
+                        className="btn-secondary w-full"
+                        onClick={() => handleCancel(booking._id)}
+                      >
+                        Cancel Booking
+                      </button>
+                    </div>
+                  )}
+
+                  {aiResult && (
+                    <div className="ai-assistant-box">
+                      <div className="ai-assistant-header">
+                        <span className="ai-assistant-badge">🤖 Gemini Prep Guide</span>
+                      </div>
+                      <p className="ai-assistant-message">{aiResult.message}</p>
+                      {aiResult.tips.length > 0 && (
+                        <div className="ai-assistant-tips">
+                          <strong className="ai-assistant-tips-title">📋 Preparation Tips</strong>
+                          <ul>
+                            {aiResult.tips.map((tip, idx) => (
+                              <li key={idx}>{tip}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               );

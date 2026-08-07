@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { reviewAPI } from '../services/api';
+import { reviewAPI, aiAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { staggerFadeIn, bounceInColorful } from '../animations/gsapAnimations';
 import './Reviews.css';
@@ -30,11 +30,19 @@ const Reviews: React.FC<ReviewsProps> = ({ eventId }) => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [aiSummary, setAiSummary] = useState<{
+    summary: string;
+    sentiment: string;
+    positivePoints: string[];
+    negativePoints: string[];
+  } | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const reviewsRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchReviews();
+    setAiSummary(null);
   }, [eventId]);
 
   useEffect(() => {
@@ -79,10 +87,26 @@ const Reviews: React.FC<ReviewsProps> = ({ eventId }) => {
       setRating(5);
       setShowForm(false);
       fetchReviews();
+      setAiSummary(null);
     } catch (error) {
       console.error('Failed to submit review:', error);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleAiSummarize = async () => {
+    if (aiLoading || totalReviews === 0) return;
+
+    setAiLoading(true);
+    setAiSummary(null);
+    try {
+      const response = await aiAPI.summarizeReviews(eventId);
+      setAiSummary(response.data);
+    } catch (error) {
+      console.error('AI review summarizer error:', error);
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -98,6 +122,15 @@ const Reviews: React.FC<ReviewsProps> = ({ eventId }) => {
     return <div className="reviews-loading">Loading reviews...</div>;
   }
 
+  const sentimentLabel = (sentiment: string) => {
+    switch (sentiment) {
+      case 'positive': return '😄 Positive';
+      case 'negative': return '😞 Negative';
+      case 'mixed': return '😐 Mixed';
+      default: return '😶 Neutral';
+    }
+  };
+
   return (
     <div className="reviews-section">
       <div className="reviews-header">
@@ -110,6 +143,56 @@ const Reviews: React.FC<ReviewsProps> = ({ eventId }) => {
           </div>
         </div>
       </div>
+
+      <div className="ai-summarize-row">
+        <button
+          className="btn-ai-summarize"
+          onClick={handleAiSummarize}
+          disabled={aiLoading || totalReviews === 0}
+        >
+          {aiLoading ? '⏳ Gemini is summarizing...' : '✨ Summarize Reviews with AI'}
+        </button>
+        {totalReviews === 0 && (
+          <span className="ai-summarize-hint">Add reviews first to generate an AI summary.</span>
+        )}
+      </div>
+
+      {aiSummary && (
+        <div className="ai-review-summary">
+          <div className="ai-summary-header">
+            <span className="ai-summary-badge">🤖 Gemini Review Summary</span>
+            <span className={`ai-summary-sentiment sentiment-${aiSummary.sentiment}`}>
+              {sentimentLabel(aiSummary.sentiment)}
+            </span>
+          </div>
+          <p className="ai-summary-text">{aiSummary.summary}</p>
+
+          {(aiSummary.positivePoints.length > 0 || aiSummary.negativePoints.length > 0) && (
+            <div className="ai-summary-points">
+              {aiSummary.positivePoints.length > 0 && (
+                <div className="ai-summary-positive">
+                  <strong>👍 What people loved</strong>
+                  <ul>
+                    {aiSummary.positivePoints.map((point, idx) => (
+                      <li key={idx}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {aiSummary.negativePoints.length > 0 && (
+                <div className="ai-summary-negative">
+                  <strong>👎 What people mentioned</strong>
+                  <ul>
+                    {aiSummary.negativePoints.map((point, idx) => (
+                      <li key={idx}>{point}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {isAuthenticated && !showForm && (
         <button className="btn-add-review" onClick={() => setShowForm(true)}>
@@ -188,3 +271,4 @@ const Reviews: React.FC<ReviewsProps> = ({ eventId }) => {
 };
 
 export default Reviews;
+

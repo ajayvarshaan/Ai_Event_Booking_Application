@@ -1,12 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EventCard from '../components/EventCard';
 import Modal from '../components/Modal';
 import Toast from '../components/Toast';
-import { eventAPI, wishlistAPI } from '../services/api';
+import { eventAPI, wishlistAPI, aiAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  FaMagic, FaCalendarWeek, FaMoneyBillWave, FaFire, FaClock,
+  FaGlobe, FaSun, FaBolt, FaUsers, FaCrown, FaHandshake,
+  FaSearch, FaRobot, FaSync, FaHeart, FaRegHeart, FaMusic,
+  FaFutbol, FaLaptopCode, FaBriefcase, FaGift
+} from 'react-icons/fa';
 import './Home.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Event {
   _id: string;
@@ -50,12 +59,30 @@ const Home: React.FC = () => {
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
   const [wishlistEventIds, setWishlistEventIds] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [isAiSearch, setIsAiSearch] = useState(false);
+  const [aiSearchLoading, setAiSearchLoading] = useState(false);
+  const [aiSearchExplanation, setAiSearchExplanation] = useState('');
+  const [aiSearchEventIds, setAiSearchEventIds] = useState<string[]>([]);
+  const [aiRecommendations, setAiRecommendations] = useState<{ text: string; events: Event[] } | null>(null);
+  const [aiRecsLoading, setAiRecsLoading] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const eventsRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+  const discoveryRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const aiSectionRef = useRef<HTMLElement>(null);
+  const compareRef = useRef<HTMLDivElement>(null);
+  const dealRadarRef = useRef<HTMLElement>(null);
+  const statsAnimatedRef = useRef<HTMLDivElement>(null);
+
+  // Hero floating orbs with parallax
+  const heroOrb1Ref = useRef<HTMLDivElement>(null);
+  const heroOrb2Ref = useRef<HTMLDivElement>(null);
+  const heroOrb3Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -100,56 +127,394 @@ const Home: React.FC = () => {
     fetchWishlist();
   }, [isAuthenticated]);
 
+  // ===== MASTER GSAP ANIMATIONS =====
   useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    const ctx = gsap.context(() => {
+      // Hero entrance animations
+      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    // Animate hero section
-    if (heroRef.current) {
-      tl.fromTo(heroRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6 }
-      );
-    }
-
-    // Animate hero title with word-by-word reveal
-    if (titleRef.current) {
-      const text = titleRef.current.textContent || '';
-      titleRef.current.innerHTML = '';
-      
-      text.split(' ').forEach((word) => {
-        const wordSpan = document.createElement('span');
-        wordSpan.style.display = 'inline-block';
-        wordSpan.style.marginRight = '20px';
-        wordSpan.style.opacity = '0';
+      if (titleRef.current) {
+        const text = titleRef.current.textContent || '';
+        titleRef.current.innerHTML = '';
         
-        word.split('').forEach((char) => {
-          const span = document.createElement('span');
-          span.textContent = char;
-          span.style.display = 'inline-block';
-          wordSpan.appendChild(span);
+        text.split(' ').forEach((word, wi) => {
+          const wordSpan = document.createElement('span');
+          wordSpan.style.display = 'inline-block';
+          wordSpan.style.marginRight = '20px';
+          wordSpan.style.opacity = '0';
+          wordSpan.style.transform = 'translateY(60px) rotateX(60deg)';
+          wordSpan.style.transformStyle = 'preserve-3d';
+          
+          word.split('').forEach((char) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.display = 'inline-block';
+            span.style.background = 'linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%)';
+            span.style.webkitBackgroundClip = 'text';
+            span.style.webkitTextFillColor = 'transparent';
+            span.style.backgroundClip = 'text';
+            span.style.filter = 'drop-shadow(0 4px 20px rgba(255, 255, 255, 0.3))';
+            wordSpan.appendChild(span);
+          });
+          
+          titleRef.current?.appendChild(wordSpan);
+          const chars = wordSpan.querySelectorAll('span');
+          
+          heroTl.to(chars, {
+            opacity: 1,
+            y: 0,
+            rotationX: 0,
+            duration: 0.5,
+            stagger: 0.03,
+            ease: 'back.out(2)'
+          }, wi * 0.15);
         });
-        
-        titleRef.current?.appendChild(wordSpan);
-      });
 
-      const words = titleRef.current.querySelectorAll('span');
-      tl.to(words, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.5)'
-      }, '-=0.3');
-    }
+        // Word-level rise animation
+        heroTl.to(titleRef.current.querySelectorAll('span'), {
+          opacity: 1,
+          y: 0,
+          rotationX: 0,
+          duration: 0.8,
+          ease: 'back.out(1.8)'
+        }, '-=0.4');
+      }
 
-    // Animate subtitle
-    if (subtitleRef.current) {
-      tl.fromTo(subtitleRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power4.out' },
-        '-=0.6'
-      );
+      if (subtitleRef.current) {
+        heroTl.fromTo(subtitleRef.current,
+          { opacity: 0, y: 40, scale: 0.95 },
+          { opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power4.out' },
+          '-=0.6'
+        );
+      }
+
+      // Hero background orbs floating
+      if (heroOrb1Ref.current) {
+        gsap.to(heroOrb1Ref.current, {
+          x: 100,
+          y: 50,
+          scale: 1.3,
+          duration: 10,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        });
+      }
+      if (heroOrb2Ref.current) {
+        gsap.to(heroOrb2Ref.current, {
+          x: -80,
+          y: -60,
+          scale: 1.2,
+          duration: 8,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        });
+      }
+      if (heroOrb3Ref.current) {
+        gsap.to(heroOrb3Ref.current, {
+          x: 60,
+          y: -40,
+          scale: 1.4,
+          duration: 12,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut'
+        });
+      }
+
+      // Hero parallax on scroll
+      if (heroRef.current) {
+        gsap.to(heroRef.current, {
+          y: -80,
+          opacity: 0.6,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1
+          }
+        });
+      }
+
+      // Discovery section reveal
+      if (discoveryRef.current) {
+        gsap.fromTo(discoveryRef.current,
+          { opacity: 0, y: 80 },
+          {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: discoveryRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+      }
+
+      // Discovery chips staggered entrance
+      if (discoveryRef.current) {
+        gsap.fromTo(discoveryRef.current.querySelectorAll('.discovery-chip'),
+          { opacity: 0, y: 30, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.08, ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: discoveryRef.current,
+              start: 'top 80%'
+            }
+          }
+        );
+      }
+
+      // Discovery metrics animated numbers
+      if (statsAnimatedRef.current) {
+        const metrics = Array.from(statsAnimatedRef.current.querySelectorAll('.discovery-metric strong')) as HTMLElement[];
+        const numericMetrics: { el: HTMLElement; finalValue: number; prefix: string }[] = [];
+
+        metrics.forEach((el) => {
+          const text = el.textContent || '';
+          const match = text.match(/(\d+)/);
+          const prefix = text.includes('$') ? '$' : '';
+          
+          // Only animate metrics that are purely numeric (with optional $ prefix)
+          if (match && /^[\$\d]+$/.test(text.replace(/\d+/, match[0]).trim())) {
+            const finalValue = parseInt(match[0]);
+            numericMetrics.push({ el, finalValue, prefix });
+            el.textContent = '0';
+            el.style.display = 'inline-block';
+          }
+        });
+
+        gsap.fromTo(statsAnimatedRef.current.querySelectorAll('.discovery-metric'),
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: statsAnimatedRef.current,
+              start: 'top 85%'
+            },
+            onComplete: () => {
+              numericMetrics.forEach(({ el, finalValue, prefix }) => {
+                // Animate number counting
+                const obj = { val: 0 };
+                gsap.to(obj, {
+                  val: finalValue,
+                  duration: 1.2,
+                  ease: 'power2.out',
+                  onUpdate: () => {
+                    el.textContent = prefix + Math.round(obj.val).toString();
+                  }
+                });
+              });
+            }
+          }
+        );
+      }
+
+      // Search & filter section reveal
+      if (searchRef.current) {
+        gsap.fromTo(searchRef.current,
+          { opacity: 0, y: 80 },
+          {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: searchRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+      }
+
+      // Vibe chips staggered
+      if (searchRef.current) {
+        gsap.fromTo(searchRef.current.querySelectorAll('.vibe-chip'),
+          { opacity: 0, y: 30, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.07, ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: searchRef.current,
+              start: 'top 80%'
+            }
+          }
+        );
+      }
+
+      // Filter buttons staggered
+      if (searchRef.current) {
+        gsap.fromTo(searchRef.current.querySelectorAll('.filter-btn'),
+          { opacity: 0, y: 25, scale: 0.9 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.05, ease: 'back.out(1.6)',
+            scrollTrigger: {
+              trigger: searchRef.current.querySelector('.filter-buttons'),
+              start: 'top 90%'
+            }
+          }
+        );
+      }
+
+      // AI for you section
+      if (aiSectionRef.current) {
+        gsap.fromTo(aiSectionRef.current,
+          { opacity: 0, y: 100, scale: 0.96 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: aiSectionRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+      }
+
+      // Compare launchpad
+      if (compareRef.current) {
+        gsap.fromTo(compareRef.current,
+          { opacity: 0, y: 80, scale: 0.96 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 1, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: compareRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+      }
+
+      // Deal radar section
+      if (dealRadarRef.current) {
+        gsap.fromTo(dealRadarRef.current,
+          { opacity: 0, y: 100 },
+          {
+            opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
+            scrollTrigger: {
+              trigger: dealRadarRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+
+        gsap.fromTo(dealRadarRef.current.querySelectorAll('.deal-radar-card'),
+          { opacity: 0, y: 60, scale: 0.92 },
+          {
+            opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.15, ease: 'back.out(1.6)',
+            scrollTrigger: {
+              trigger: dealRadarRef.current,
+              start: 'top 80%'
+            }
+          }
+        );
+      }
+
+      // Event cards entrance
+      if (eventsRef.current) {
+        gsap.fromTo(eventsRef.current.querySelectorAll('.event-card'),
+          { 
+            opacity: 0, 
+            y: 100, 
+            scale: 0.9,
+            rotationY: -12,
+            transformPerspective: 800
+          },
+          { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            rotationY: 0,
+            duration: 1, 
+            stagger: {
+              amount: 0.8,
+              from: 'start',
+              ease: 'power2.out'
+            },
+            ease: 'power4.out',
+            clearProps: 'transform',
+            scrollTrigger: {
+              trigger: eventsRef.current,
+              start: 'top 85%'
+            }
+          }
+        );
+      }
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Re-trigger event cards animation when filteredEvents changes
+  useEffect(() => {
+    if (!loading && eventsRef.current) {
+      const cards = eventsRef.current.querySelectorAll('.event-card');
+      if (cards.length > 0) {
+        gsap.fromTo(cards,
+          { 
+            opacity: 0, 
+            y: 60, 
+            scale: 0.9,
+            rotationX: -10
+          },
+          { 
+            opacity: 1, 
+            y: 0, 
+            scale: 1,
+            rotationX: 0,
+            duration: 0.8, 
+            stagger: {
+              amount: 0.5,
+              from: 'start',
+              ease: 'power2.out'
+            },
+            ease: 'power4.out',
+            clearProps: 'transform'
+          }
+        );
+      }
     }
+  }, [loading, filteredEvents]);
+
+  // Animate AI recommendation cards when they load
+  useEffect(() => {
+    if (aiRecommendations && aiRecommendations.events.length > 0) {
+      const cards = document.querySelectorAll('.ai-recs-card');
+      if (cards.length > 0) {
+        gsap.fromTo(cards,
+          { opacity: 0, y: 60, scale: 0.9, rotationY: -15 },
+          {
+            opacity: 1, y: 0, scale: 1, rotationY: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: 'back.out(1.7)',
+            transformPerspective: 800,
+            clearProps: 'transform'
+          }
+        );
+      }
+    }
+  }, [aiRecommendations]);
+
+  // Handle chip clicks with GSAP feedback
+  const handleDiscoveryClick = useCallback((mode: DiscoveryMode) => {
+    gsap.fromTo('.discovery-chip.active',
+      { scale: 1 },
+      { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.in' }
+    );
+    setDiscoveryMode(mode);
+  }, []);
+
+  const handleVibeClick = useCallback((mode: VibeMode) => {
+    gsap.fromTo('.vibe-chip.active',
+      { scale: 1 },
+      { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.in' }
+    );
+    setVibeMode(mode);
+  }, []);
+
+  const handleCategoryClick = useCallback((category: string) => {
+    gsap.fromTo('.filter-btn.active',
+      { scale: 1 },
+      { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1, ease: 'power1.in' }
+    );
+    setSelectedCategory(category);
   }, []);
 
   const getEventDate = (event: Event) => {
@@ -272,36 +637,6 @@ const Home: React.FC = () => {
     setFilteredEvents(filtered);
   }, [searchQuery, selectedCategory, discoveryMode, sortMode, vibeMode, showWishlistOnly, wishlistEventIds, events]);
 
-  useEffect(() => {
-    if (!loading && eventsRef.current) {
-      const cards = eventsRef.current.querySelectorAll('.event-card');
-      if (cards.length > 0) {
-        gsap.fromTo(cards,
-          { 
-            opacity: 0, 
-            y: 80, 
-            scale: 0.9,
-            rotationX: -15
-          },
-          { 
-            opacity: 1, 
-            y: 0, 
-            scale: 1,
-            rotationX: 0,
-            duration: 0.8, 
-            stagger: {
-              amount: 0.6,
-              from: 'start',
-              ease: 'power2.out'
-            },
-            ease: 'power4.out',
-            clearProps: 'transform'
-          }
-        );
-      }
-    }
-  }, [loading, filteredEvents]);
-
   const handleBook = (eventId: string) => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -354,6 +689,61 @@ const Home: React.FC = () => {
 
   const openComparePage = () => {
     navigate('/compare');
+  };
+
+  const handleAiSearch = async () => {
+    if (!searchQuery.trim() || !isAuthenticated) return;
+
+    setAiSearchLoading(true);
+    setAiSearchExplanation('');
+    setAiSearchEventIds([]);
+
+    try {
+      const response = await aiAPI.search(searchQuery.trim());
+      setAiSearchExplanation(response.data.explanation);
+      setAiSearchEventIds(response.data.eventIds);
+    } catch (error) {
+      console.error('AI search error:', error);
+      setToast({ message: 'AI search failed. Please try again.', type: 'error' });
+    } finally {
+      setAiSearchLoading(false);
+    }
+  };
+
+  const loadAiRecommendations = async () => {
+    if (!isAuthenticated) return;
+
+    setAiRecsLoading(true);
+    setAiRecommendations(null);
+
+    try {
+      const response = await aiAPI.personalized(3);
+      const { recommendations, eventIds } = response.data;
+
+      // Map recommended event IDs to full event objects
+      const recEvents = events.filter((event) => eventIds.includes(event._id));
+
+      // If Gemini didn't return proper IDs, fall back to smart picks based on user
+      if (recEvents.length === 0 && eventIds.length === 0) {
+        const fallbackEvents = [...events]
+          .sort((a, b) => getSmartScore(b) - getSmartScore(a))
+          .slice(0, 3);
+        setAiRecommendations({
+          text: recommendations,
+          events: fallbackEvents
+        });
+      } else {
+        setAiRecommendations({
+          text: recommendations,
+          events: recEvents
+        });
+      }
+    } catch (error) {
+      console.error('AI recommendations error:', error);
+      setToast({ message: 'Failed to load AI recommendations.', type: 'error' });
+    } finally {
+      setAiRecsLoading(false);
+    }
   };
 
   const confirmDelete = async () => {
@@ -455,7 +845,7 @@ const Home: React.FC = () => {
   }[vibeMode];
 
   return (
-    <div className="home">
+    <div className="home" ref={pageRef}>
       {toast && (
         <Toast
           message={toast.message}
@@ -474,16 +864,30 @@ const Home: React.FC = () => {
         cancelText="Cancel"
       />
       
+      {/* ===== Enhanced Hero Section ===== */}
       <div className="hero" ref={heroRef}>
         <div className="hero-bg-shape shape-1"></div>
         <div className="hero-bg-shape shape-2"></div>
         <div className="hero-bg-shape shape-3"></div>
+        <div className="hero-orb hero-orb-1" ref={heroOrb1Ref}></div>
+        <div className="hero-orb hero-orb-2" ref={heroOrb2Ref}></div>
+        <div className="hero-orb hero-orb-3" ref={heroOrb3Ref}></div>
+        <div className="hero-grid-overlay"></div>
+        
         <h1 ref={titleRef}>Discover Amazing Events</h1>
         <p ref={subtitleRef}>Book your favorite events and create unforgettable memories</p>
+        
+        <div className="hero-scroll-indicator">
+          <span>Scroll to explore</span>
+          <div className="scroll-line">
+            <div className="scroll-dot"></div>
+          </div>
+        </div>
       </div>
 
       <div className="container">
-        <div className="discovery-studio">
+        {/* ===== Discovery Studio ===== */}
+        <div className="discovery-studio" ref={discoveryRef}>
           <div className="discovery-copy">
             <span className="discovery-kicker">Discovery Studio</span>
             <h2>Find events by momentum, urgency, and value</h2>
@@ -494,39 +898,39 @@ const Home: React.FC = () => {
             <div className="discovery-chips">
               <button
                 className={`discovery-chip ${discoveryMode === 'smart' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('smart')}
+                onClick={() => handleDiscoveryClick('smart')}
               >
-                ✨ Smart Picks
+                <FaMagic style={{ marginRight: '6px' }} /> Smart Picks
               </button>
               <button
                 className={`discovery-chip ${discoveryMode === 'weekend' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('weekend')}
+                onClick={() => handleDiscoveryClick('weekend')}
               >
-                🎊 Weekend Plans
+                <FaCalendarWeek style={{ marginRight: '6px' }} /> Weekend Plans
               </button>
               <button
                 className={`discovery-chip ${discoveryMode === 'budget' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('budget')}
+                onClick={() => handleDiscoveryClick('budget')}
               >
-                💸 Budget Friendly
+                <FaMoneyBillWave style={{ marginRight: '6px' }} /> Budget Friendly
               </button>
               <button
                 className={`discovery-chip ${discoveryMode === 'almost-full' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('almost-full')}
+                onClick={() => handleDiscoveryClick('almost-full')}
               >
-                🔥 Almost Gone
+                <FaFire style={{ marginRight: '6px' }} /> Almost Gone
               </button>
               <button
                 className={`discovery-chip ${discoveryMode === 'soon' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('soon')}
+                onClick={() => handleDiscoveryClick('soon')}
               >
-                ⏰ Happening Soon
+                <FaClock style={{ marginRight: '6px' }} /> Happening Soon
               </button>
               <button
                 className={`discovery-chip ${discoveryMode === 'all' ? 'active' : ''}`}
-                onClick={() => setDiscoveryMode('all')}
+                onClick={() => handleDiscoveryClick('all')}
               >
-                🌐 View All
+                <FaGlobe style={{ marginRight: '6px' }} /> View All
               </button>
             </div>
 
@@ -541,31 +945,32 @@ const Home: React.FC = () => {
             </label>
           </div>
 
-          <div className="discovery-metrics">
+          <div className="discovery-metrics" ref={statsAnimatedRef}>
             <div className="discovery-metric">
               <span className="metric-label">Active Lens</span>
-              <strong>{activeDiscoveryLabel}</strong>
+              <strong data-original={activeDiscoveryLabel}>{activeDiscoveryLabel}</strong>
             </div>
             <div className="discovery-metric">
               <span className="metric-label">Active Vibe</span>
-              <strong>{activeVibeLabel}</strong>
+              <strong data-original={activeVibeLabel}>{activeVibeLabel}</strong>
             </div>
             <div className="discovery-metric">
               <span className="metric-label">Matching Events</span>
-              <strong>{filteredEvents.length}</strong>
+              <strong data-original={filteredEvents.length.toString()}>{filteredEvents.length}</strong>
             </div>
             <div className="discovery-metric">
               <span className="metric-label">High Demand</span>
-              <strong>{highDemandCount}</strong>
+              <strong data-original={highDemandCount.toString()}>{highDemandCount}</strong>
             </div>
             <div className="discovery-metric">
               <span className="metric-label">Average Price</span>
-              <strong>${averagePrice}</strong>
+              <strong data-original={`$${averagePrice}`}>{`$${averagePrice}`}</strong>
             </div>
           </div>
         </div>
 
-        <div className="search-filter-section">
+        {/* ===== Search & Filter Section ===== */}
+        <div className="search-filter-section" ref={searchRef}>
           <div className="vibe-studio">
             <div className="vibe-copy">
               <span className="vibe-kicker">Vibe Match</span>
@@ -573,37 +978,71 @@ const Home: React.FC = () => {
               <p>Switch between intent-based vibes to discover the right event for the moment.</p>
             </div>
             <div className="vibe-chips">
-              <button className={`vibe-chip ${vibeMode === 'all' ? 'active' : ''}`} onClick={() => setVibeMode('all')}>Any Vibe</button>
-              <button className={`vibe-chip ${vibeMode === 'after-work' ? 'active' : ''}`} onClick={() => setVibeMode('after-work')}>🌆 After Work</button>
-              <button className={`vibe-chip ${vibeMode === 'high-energy' ? 'active' : ''}`} onClick={() => setVibeMode('high-energy')}>⚡ High Energy</button>
-              <button className={`vibe-chip ${vibeMode === 'family' ? 'active' : ''}`} onClick={() => setVibeMode('family')}>👨‍👩‍👧 Family</button>
-              <button className={`vibe-chip ${vibeMode === 'premium' ? 'active' : ''}`} onClick={() => setVibeMode('premium')}>✨ Premium</button>
-              <button className={`vibe-chip ${vibeMode === 'networking' ? 'active' : ''}`} onClick={() => setVibeMode('networking')}>🤝 Networking</button>
+              <button className={`vibe-chip ${vibeMode === 'all' ? 'active' : ''}`} onClick={() => handleVibeClick('all')}>Any Vibe</button>
+              <button className={`vibe-chip ${vibeMode === 'after-work' ? 'active' : ''}`} onClick={() => handleVibeClick('after-work')}><FaSun style={{ marginRight: '6px' }} /> After Work</button>
+              <button className={`vibe-chip ${vibeMode === 'high-energy' ? 'active' : ''}`} onClick={() => handleVibeClick('high-energy')}><FaBolt style={{ marginRight: '6px' }} /> High Energy</button>
+              <button className={`vibe-chip ${vibeMode === 'family' ? 'active' : ''}`} onClick={() => handleVibeClick('family')}><FaUsers style={{ marginRight: '6px' }} /> Family</button>
+              <button className={`vibe-chip ${vibeMode === 'premium' ? 'active' : ''}`} onClick={() => handleVibeClick('premium')}><FaCrown style={{ marginRight: '6px' }} /> Premium</button>
+              <button className={`vibe-chip ${vibeMode === 'networking' ? 'active' : ''}`} onClick={() => handleVibeClick('networking')}><FaHandshake style={{ marginRight: '6px' }} /> Networking</button>
             </div>
           </div>
 
           <div className="search-box">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon"><FaSearch /></span>
             <input
               type="text"
-              placeholder="Search events by title, description, or location..."
+              placeholder={
+                isAiSearch
+                  ? 'Ask AI: e.g. "jazz concerts under $50 this weekend"'
+                  : 'Search events by title, description, or location...'
+              }
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && isAiSearch) {
+                  handleAiSearch();
+                }
+              }}
               className="search-input"
             />
+            {isAuthenticated && (
+              <button
+                className={`ai-search-toggle ${isAiSearch ? 'active' : ''}`}
+                onClick={() => {
+                  setIsAiSearch((prev) => !prev);
+                  setAiSearchExplanation('');
+                  setAiSearchEventIds([]);
+                }}
+                title={isAiSearch ? 'Switch to keyword search' : 'Try AI-powered search'}
+              >
+                <FaRobot style={{ marginRight: '4px' }} /> AI
+              </button>
+            )}
             <button 
               className="refresh-btn" 
-              onClick={refreshEvents}
-              title="Refresh events"
+              onClick={isAiSearch ? handleAiSearch : refreshEvents}
+              title={isAiSearch ? 'Run AI search' : 'Refresh events'}
             >
-              🔄
+              {isAiSearch ? (aiSearchLoading ? <FaClock /> : <FaMagic />) : <FaSync />}
             </button>
           </div>
+          
+          {aiSearchExplanation && (
+            <div className="ai-search-result">
+              <p className="ai-search-explanation"><FaRobot style={{ marginRight: '8px' }} /> {aiSearchExplanation}</p>
+            </div>
+          )}
+          
+          {isAiSearch && aiSearchEventIds.length === 0 && aiSearchExplanation && !aiSearchLoading && (
+            <div className="ai-search-empty">
+              <p>Try a different query like "music events" or "events under $50".</p>
+            </div>
+          )}
           
           <div className="filter-buttons">
             <button
               className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => handleCategoryClick('all')}
             >
               All Events
             </button>
@@ -612,44 +1051,104 @@ const Home: React.FC = () => {
                 className={`filter-btn wishlist-filter-btn ${showWishlistOnly ? 'active' : ''}`}
                 onClick={() => setShowWishlistOnly((prev) => !prev)}
               >
-                {showWishlistOnly ? '❤️ Wishlist Only' : '🤍 Wishlist'}
+                {showWishlistOnly ? <><FaHeart style={{ marginRight: '6px' }} /> Wishlist Only</> : <><FaRegHeart style={{ marginRight: '6px' }} /> Wishlist</>}
               </button>
             )}
             <button
               className={`filter-btn ${selectedCategory === 'music' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('music')}
+              onClick={() => handleCategoryClick('music')}
             >
-              🎵 Music
+              <FaMusic style={{ marginRight: '6px' }} /> Music
             </button>
             <button
               className={`filter-btn ${selectedCategory === 'sports' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('sports')}
+              onClick={() => handleCategoryClick('sports')}
             >
-              ⚽ Sports
+              <FaFutbol style={{ marginRight: '6px' }} /> Sports
             </button>
             <button
               className={`filter-btn ${selectedCategory === 'tech' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('tech')}
+              onClick={() => handleCategoryClick('tech')}
             >
-              💻 Tech
+              <FaLaptopCode style={{ marginRight: '6px' }} /> Tech
             </button>
             <button
               className={`filter-btn ${selectedCategory === 'business' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('business')}
+              onClick={() => handleCategoryClick('business')}
             >
-              💼 Business
+              <FaBriefcase style={{ marginRight: '6px' }} /> Business
             </button>
             <button
               className={`filter-btn ${selectedCategory === 'other' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('other')}
+              onClick={() => handleCategoryClick('other')}
             >
-              🎉 Other
+              <FaGift style={{ marginRight: '6px' }} /> Other
             </button>
           </div>
         </div>
 
+        {isAuthenticated && (
+          <section className="ai-for-you-section" ref={aiSectionRef}>
+            <div className="ai-for-you-header">
+              <div>
+                <span className="ai-for-you-kicker"><FaMagic style={{ marginRight: '4px' }} /> AI For You</span>
+                <h3>Personalized recommendations based on your activity</h3>
+                <p>Gemini analyzes your bookings and wishlist to suggest events you'll love.</p>
+              </div>
+              <button
+                className="ai-recs-btn"
+                onClick={loadAiRecommendations}
+                disabled={aiRecsLoading}
+              >
+                {aiRecsLoading ? <><FaClock style={{ marginRight: '6px' }} /> Analyzing...</> : <><FaMagic style={{ marginRight: '6px' }} /> Get My Recommendations</>}
+              </button>
+            </div>
+
+            {aiRecsLoading && (
+              <div className="ai-recs-loading"><FaMagic style={{ marginRight: '8px' }} /> Gemini is analyzing your preferences...</div>
+            )}
+
+            {aiRecommendations && !aiRecsLoading && (
+              <div className="ai-recs-content">
+                <div className="ai-recs-explanation">
+                  <p className="ai-recs-text" style={{ whiteSpace: 'pre-wrap' }}>{aiRecommendations.text}</p>
+                </div>
+                {aiRecommendations.events.length > 0 && (
+                  <div className="ai-recs-grid">
+                    {aiRecommendations.events.map((event) => (
+                      <article key={event._id} className="ai-recs-card">
+                        <img src={event.image} alt={event.title} />
+                        <div className="ai-recs-card-body">
+                          <div className="ai-recs-top">
+                            <span className="ai-recs-tag">{event.category}</span>
+                            <strong>${event.price}</strong>
+                          </div>
+                          <h4>{event.title}</h4>
+                          <p>{new Date(event.date).toLocaleDateString()} • {event.time}</p>
+                          <p>{event.location}</p>
+                          <div className="ai-recs-actions">
+                            <button className="btn-primary" onClick={() => handleBook(event._id)}>
+                              Book Now
+                            </button>
+                            <button
+                              className="btn-secondary"
+                              onClick={() => handleToggleCompare(event)}
+                            >
+                              {comparedEvents.some((item) => item._id === event._id) ? 'Compared' : 'Compare'}
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
         {comparedEvents.length > 0 && (
-          <div className="compare-launchpad">
+          <div className="compare-launchpad" ref={compareRef}>
             <div>
               <span className="compare-launch-kicker">Compare Ready</span>
               <h3>{comparedEvents.length} event{comparedEvents.length > 1 ? 's' : ''} selected</h3>
@@ -663,7 +1162,7 @@ const Home: React.FC = () => {
         )}
 
         {dealRadarEvents.length > 0 && (
-          <section className="deal-radar-section">
+          <section className="deal-radar-section" ref={dealRadarRef}>
             <div className="deal-radar-header">
               <span className="deal-radar-kicker">Deal Radar</span>
               <h3>Best value events this week</h3>
