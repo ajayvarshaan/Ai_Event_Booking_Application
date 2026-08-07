@@ -52,7 +52,9 @@ interface Activity {
   createdAt: string;
 }
 
-const API: AxiosInstance = axios.create({ baseURL: 'http://localhost:5000/api' });
+const API: AxiosInstance = axios.create({
+  baseURL: "https://ai-event-booking-application-backend.onrender.com/api",
+});
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem('token');
