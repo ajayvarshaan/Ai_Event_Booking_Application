@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-/* Floating animated orbs */
+
 .plan-orb {
   position: absolute;
   border-radius: 50%;
@@ -343,7 +343,7 @@
   50% { transform: translateY(-6px); }
 }
 
-/* Top accent line */
+
 .plan-event-card::before {
   content: '';
   position: absolute;
@@ -362,7 +362,7 @@
   100% { background-position: 300% 0%; }
 }
 
-/* Shine sweep on hover */
+
 .plan-event-card::after {
   content: '';
   position: absolute;

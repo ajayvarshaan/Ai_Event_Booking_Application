@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Activity from '../models/Activity';
 
-// Log activity helper function
+
 export const logActivity = async (data: {
   user: any;
   action: string;
@@ -32,7 +32,7 @@ export const logActivity = async (data: {
   }
 };
 
-// Get all activities (admin only)
+
 export const getAllActivities = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -108,7 +108,7 @@ export const getUserActivities = async (req: Request, res: Response) => {
   }
 };
 
-// Get activity statistics (admin only)
+
 export const getActivityStats = async (req: Request, res: Response) => {
   try {
     const stats = await Activity.aggregate([

@@ -9,7 +9,7 @@ import { protect, admin } from '../middleware/auth';
 
 const router = express.Router();
 
-// Admin routes
+
 router.get('/all', protect, admin, getAllActivities);
 router.get('/recent', protect, admin, getRecentActivities);
 router.get('/stats', protect, admin, getActivityStats);

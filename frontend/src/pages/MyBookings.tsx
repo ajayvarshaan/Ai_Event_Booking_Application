@@ -39,7 +39,7 @@ const MyBookings: React.FC = () => {
     const fetchBookings = async () => {
       try {
         const response = await bookingAPI.getMyBookings();
-        // Filter out bookings with deleted events
+        
         const validBookings = response.data.filter((b: Booking) => b.event !== null);
         setBookings(validBookings);
       } catch (error) {
@@ -94,7 +94,7 @@ useEffect(() => {
     }
   }, [loading, bookings]);
 
-  // 3D tilt on booking card hover
+  
   const handleCardMove = useCallback((e: React.MouseEvent) => {
     const card = e.currentTarget as HTMLElement;
     const rect = card.getBoundingClientRect();

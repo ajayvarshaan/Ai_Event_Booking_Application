@@ -75,7 +75,7 @@ const AdminDashboard: React.FC = () => {
 
     fetchDashboardData();
     
-    // Refetch data every 5 seconds
+    
     const interval = setInterval(fetchDashboardData, 5000);
     return () => clearInterval(interval);
   }, [user, navigate]);
@@ -156,7 +156,6 @@ const AdminDashboard: React.FC = () => {
           <p>Overview of your event booking system</p>
         </div>
 
-        {/* AI Demand Forecast */}
         <div className="ai-forecast-section">
           <div className="ai-forecast-header">
             <div>
@@ -207,7 +206,7 @@ const AdminDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* User Booking Details with Event Information */}
+        {}
         <div className="user-booking-details-section">
           <h2>📋 User Booking Details</h2>
           
@@ -219,7 +218,6 @@ const AdminDashboard: React.FC = () => {
             <div className="booking-details-list">
               {stats.userBookingStats.map((userStat) => (
                 <div key={userStat._id} className="booking-details-card">
-                  {/* User Information Header */}
                   <div className="user-header">
                     <div className="user-avatar">{userStat.userName.charAt(0).toUpperCase()}</div>
                     <div className="user-basic-info">
@@ -228,7 +226,7 @@ const AdminDashboard: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Events List */}
+                  {}
                   <div className="events-section">
                     {userStat.events.map((event, idx) => (
                       <div key={idx} className="event-booking-card">
@@ -250,7 +248,7 @@ const AdminDashboard: React.FC = () => {
                     ))}
                   </div>
 
-                  {/* User Summary */}
+                  {}
                   <div className="user-summary">
                     <div className="summary-item">
                       <span className="summary-label">Total Bookings:</span>
@@ -271,7 +269,6 @@ const AdminDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Recent Activities */}
         <div className="activities-section">
           <h2>🕐 Recent Activities</h2>
           
@@ -308,7 +305,6 @@ const AdminDashboard: React.FC = () => {
           )}
         </div>
 
-        {/* Quick Actions */}
         <div className="quick-actions">
           <h2>⚡ Quick Actions</h2>
           <div className="actions-grid">

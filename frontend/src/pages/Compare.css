@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-/* Add floating orbs */
+
 .compare-page::before {
   content: '';
   position: fixed;
@@ -180,7 +180,7 @@
     0 0 60px rgba(255, 209, 102, 0.15);
 }
 
-/* Top accent line for compare cards */
+
 .compare-page-card::before {
   content: '';
   position: absolute;
@@ -282,7 +282,7 @@
   margin-top: auto;
 }
 
-/* Demand Meter */
+
 .compare-demand {
   margin-top: 4px;
 }

@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED ADMIN DASHBOARD - Dark Glassmorphism
-   ============================================ */
+
 
 .admin-dashboard {
   min-height: 100vh;
@@ -28,7 +26,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* User Booking Details Section */
+
 .user-booking-details-section {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
@@ -67,7 +65,7 @@
   transform: translateY(-4px);
 }
 
-/* User Header */
+
 .user-header {
   display: flex;
   align-items: center;
@@ -104,7 +102,7 @@
   color: #718096;
 }
 
-/* Events Section */
+
 .events-section {
   display: flex;
   flex-direction: column;
@@ -194,7 +192,7 @@
   font-weight: 700;
 }
 
-/* User Summary */
+
 .user-summary {
   display: flex;
   gap: 20px;
@@ -234,7 +232,7 @@
   font-size: 16px;
 }
 
-/* Activities Section */
+
 .activities-section {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
@@ -342,7 +340,7 @@
   font-size: 16px;
 }
 
-/* AI Demand Forecast Section */
+
 .ai-forecast-section {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
@@ -501,7 +499,7 @@
   margin: 0;
 }
 
-/* Quick Actions */
+
 .quick-actions {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(30px);
@@ -557,7 +555,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .dashboard-header h1 {
     font-size: 32px;

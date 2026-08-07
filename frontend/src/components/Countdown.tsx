@@ -21,7 +21,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
   const secondsRef = useRef<HTMLSpanElement>(null);
   const prevTimeRef = useRef({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-  // Flip number animation
+  
   const flipNumber = (element: HTMLElement) => {
     gsap.fromTo(element,
       { rotationX: -90, opacity: 0.3, y: -8, scale: 0.9 },
@@ -39,7 +39,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate }) => {
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      // Combine date and time for accurate countdown
+      
       const targetDateTime = new Date(targetDate).getTime();
       const now = new Date().getTime();
       const difference = targetDateTime - now;

@@ -22,7 +22,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Refs for GSAP animations
+  
   const pageRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const cardWrapperRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
   const orb2Ref = useRef<HTMLDivElement>(null);
   const orb3Ref = useRef<HTMLDivElement>(null);
 
-  // Particle system
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -134,10 +134,10 @@ const Login: React.FC = () => {
     };
   }, []);
 
-  // Main GSAP animations
+  
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Initial state
+      
       gsap.set(cardRef.current, { opacity: 0, y: 60, scale: 0.9, rotationX: 10 });
       gsap.set(logoRef.current, { opacity: 0, scale: 0, rotation: -180 });
       gsap.set(subtitleRef.current, { opacity: 0, y: 20 });
@@ -148,12 +148,12 @@ const Login: React.FC = () => {
       gsap.set(socialBtnsRef.current, { opacity: 0, y: 20 });
       gsap.set(registerLinkRef.current, { opacity: 0, y: 20 });
 
-      // Master timeline
+      
       const tl = gsap.timeline({
         defaults: { ease: 'power3.out' }
       });
 
-      // Card entrance with 3D effect
+      
       tl.to(cardRef.current, {
         opacity: 1,
         y: 0,
@@ -162,7 +162,7 @@ const Login: React.FC = () => {
         duration: 1.2,
         ease: 'elastic.out(1, 0.8)'
       })
-      // Logo pop in
+      
       .to(logoRef.current, {
         opacity: 1,
         scale: 1,
@@ -170,7 +170,7 @@ const Login: React.FC = () => {
         duration: 0.8,
         ease: 'back.out(2)'
       }, '-=0.6')
-      // Title characters
+      
       .to('.login-title-char', {
         opacity: 1,
         y: 0,
@@ -179,13 +179,13 @@ const Login: React.FC = () => {
         duration: 0.6,
         ease: 'back.out(1.7)'
       }, '-=0.4')
-      // Subtitle
+      
       .to(subtitleRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.6
       }, '-=0.3')
-      // Input fields stagger
+      
       .to('.login-input-group', {
         opacity: 1,
         x: 0,
@@ -193,13 +193,13 @@ const Login: React.FC = () => {
         duration: 0.7,
         ease: 'power2.out'
       }, '-=0.2')
-      // Options row
+      
       .to('.login-options', {
         opacity: 1,
         y: 0,
         duration: 0.5
       }, '-=0.3')
-      // Submit button
+      
       .to(submitBtnRef.current, {
         opacity: 1,
         y: 0,
@@ -207,26 +207,26 @@ const Login: React.FC = () => {
         duration: 0.6,
         ease: 'back.out(1.7)'
       }, '-=0.2')
-      // Divider
+      
       .to('.login-divider', {
         opacity: 1,
         scaleX: 1,
         duration: 0.5
       }, '-=0.3')
-      // Social buttons
+      
       .to(socialBtnsRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.5
       }, '-=0.3')
-      // Register link
+      
       .to(registerLinkRef.current, {
         opacity: 1,
         y: 0,
         duration: 0.5
       }, '-=0.2');
 
-      // Floating orbs animation
+      
       if (orb1Ref.current) {
         gsap.to(orb1Ref.current, {
           x: 60,
@@ -261,7 +261,7 @@ const Login: React.FC = () => {
         });
       }
 
-      // Logo continuous float
+      
       if (logoRef.current) {
         gsap.to(logoRef.current, {
           y: -8,
@@ -272,7 +272,7 @@ const Login: React.FC = () => {
         });
       }
 
-      // Submit button pulse
+      
       if (submitBtnRef.current) {
         gsap.to(submitBtnRef.current, {
           boxShadow: '0 12px 40px rgba(255, 0, 150, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2) inset',
@@ -287,7 +287,7 @@ const Login: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // 3D Tilt effect on card
+  
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current || !cardWrapperRef.current) return;
     
@@ -308,7 +308,7 @@ const Login: React.FC = () => {
       ease: 'power2.out'
     });
 
-    // Parallax on logo
+    
     if (logoRef.current) {
       gsap.to(logoRef.current, {
         x: (x - centerX) * 0.1,
@@ -337,7 +337,7 @@ const Login: React.FC = () => {
     }
   }, []);
 
-  // Magnetic button effect
+  
   const handleMagneticMove = useCallback((e: React.MouseEvent) => {
     const btn = submitBtnRef.current;
     if (!btn) return;
@@ -365,7 +365,7 @@ const Login: React.FC = () => {
     });
   }, []);
 
-  // Google Sign-In flow (Google Identity Services)
+  
   const handleGoogleLogin = useCallback(async (credential: string) => {
     setLoading(true);
     setError('');
@@ -405,7 +405,7 @@ const Login: React.FC = () => {
       }
     };
 
-    // Wait for the GSI script to load
+    
     const timer = setInterval(() => {
       if (window.google?.accounts?.id) {
         clearInterval(timer);
@@ -416,7 +416,7 @@ const Login: React.FC = () => {
     return () => clearInterval(timer);
   }, [handleGoogleLogin]);
 
-  // Error shake animation
+  
   useEffect(() => {
     if (error && cardRef.current) {
       gsap.fromTo(cardRef.current,
@@ -440,7 +440,7 @@ const Login: React.FC = () => {
     setError('');
     setLoading(true);
 
-    // Button loading animation
+    
     if (submitBtnRef.current) {
       gsap.to(submitBtnRef.current, {
         scale: 0.95,
@@ -454,7 +454,7 @@ const Login: React.FC = () => {
       const response = await authAPI.login({ email, password });
       login(response.data, response.data.token);
       
-      // Success animation
+      
       if (cardRef.current) {
         gsap.to(cardRef.current, {
           scale: 1.05,
@@ -468,7 +468,7 @@ const Login: React.FC = () => {
         navigate('/home');
       }
     } catch (err: any) {
-      // Account not found -> prompt to create a new account via popup
+      
       if (err.response?.status === 404) {
         setShowRegisterModal(true);
       } else {
@@ -484,31 +484,29 @@ const Login: React.FC = () => {
     navigate('/register');
   };
 
-  // Split title into characters
+  
   const title = 'Welcome Back';
   const titleChars = title.split('');
 
   return (
     <div className="login-page" ref={pageRef}>
-      {/* Particle canvas */}
+      {}
       <canvas ref={canvasRef} className="login-particles" />
       
-      {/* Floating orbs */}
       <div className="login-orb orb-1" ref={orb1Ref} />
       <div className="login-orb orb-2" ref={orb2Ref} />
       <div className="login-orb orb-3" ref={orb3Ref} />
 
-      {/* Main card */}
+      {}
       <div className="login-card-wrapper" ref={cardWrapperRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
         <div className="login-card" ref={cardRef}>
-          {/* Logo */}
+          {}
           <div className="login-logo" ref={logoRef}>
             <div className="login-logo-icon">
               <FaCalendarAlt />
             </div>
           </div>
 
-          {/* Title */}
           <div className="login-title">
             <h1 ref={titleRef}>
               {titleChars.map((char, i) => (
@@ -532,7 +530,6 @@ const Login: React.FC = () => {
             Sign in to continue your event journey
           </p>
 
-          {/* Error message */}
           {error && (
             <div className="login-error">
               <FaExclamationTriangle />
@@ -540,9 +537,9 @@ const Login: React.FC = () => {
             </div>
           )}
 
-          {/* Form */}
+          {}
           <form className="login-form" ref={formRef} onSubmit={handleSubmit}>
-            {/* Email input */}
+            {}
             <div className={`login-input-group ${focusedField === 'email' ? 'focused' : ''}`}>
               <span className="login-input-icon"><FaEnvelope /></span>
               <input
@@ -557,7 +554,7 @@ const Login: React.FC = () => {
               />
             </div>
 
-            {/* Password input */}
+            {}
             <div className={`login-input-group ${focusedField === 'password' ? 'focused' : ''}`}>
               <span className="login-input-icon"><FaLock /></span>
               <input
@@ -581,7 +578,6 @@ const Login: React.FC = () => {
               </button>
             </div>
 
-            {/* Options */}
             <div className="login-options">
               <label className="login-remember">
                 <input
@@ -596,7 +592,7 @@ const Login: React.FC = () => {
               </a>
             </div>
 
-            {/* Submit button */}
+            {}
             <button
               type="submit"
               className="login-submit"
@@ -616,25 +612,24 @@ const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* Divider */}
+          {}
           <div className="login-divider">
             <span>or continue with</span>
           </div>
 
-          {/* Social buttons */}
+          {}
           <div className="login-social" ref={socialBtnsRef}>
-            {/* Google Sign-In button (Google Identity Services) */}
+            {}
             <div ref={googleBtnRef} className="login-google-btn" />
           </div>
 
-{/* Register link */}
+{}
           <p className="login-register-link" ref={registerLinkRef}>
             Don't have an account? <a href="/register">Create one</a>
           </p>
         </div>
       </div>
 
-      {/* Register prompt modal for unregistered emails */}
       <Modal
         isOpen={showRegisterModal}
         onClose={() => setShowRegisterModal(false)}

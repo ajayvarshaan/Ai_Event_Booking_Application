@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED NAVBAR - Dark Glassmorphism
-   ============================================ */
+
 
 .navbar {
   background: rgba(15, 12, 41, 0.85);
@@ -24,7 +22,7 @@
   50% { box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 126, 234, 0.1); }
 }
 
-/* Animated gradient top accent line */
+
 .navbar::before {
   content: '';
   position: absolute;
@@ -95,8 +93,7 @@
   flex-wrap: nowrap;
 }
 
-/* Safe centering: links stay centered when they fit,
-   but scroll from the left (fully reachable) when they overflow. */
+
 .nav-links::before,
 .nav-links::after {
   content: '';
@@ -293,7 +290,7 @@
   overflow: hidden;
 }
 
-/* Tablet */
+
 @media (max-width: 1024px) {
   .navbar .container {
     padding: 0 20px;
@@ -334,7 +331,7 @@
   }
 }
 
-/* Mobile */
+
 @media (max-width: 768px) {
   .navbar .container {
     flex-wrap: wrap;
@@ -371,7 +368,7 @@
   }
 }
 
-/* Small Mobile */
+
 @media (max-width: 480px) {
   .navbar .container {
     padding: 0 15px;
@@ -397,7 +394,7 @@
   }
 }
 
-/* ===== Hamburger Menu (Mobile) ===== */
+
 .hamburger {
   display: none;
   width: 44px;
@@ -426,7 +423,7 @@
   box-shadow: 0 6px 18px rgba(102, 126, 234, 0.4);
 }
 
-/* Mobile dropdown menu */
+
 .mobile-menu {
   display: none;
   flex-direction: column;
@@ -507,7 +504,7 @@
   color: #ffffff;
 }
 
-/* Mobile breakpoint: show hamburger, hide desktop nav */
+
 @media (max-width: 768px) {
   .hamburger {
     display: flex;

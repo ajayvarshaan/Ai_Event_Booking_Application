@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED CREATE/EDIT EVENT - Dark Glassmorphism
-   ============================================ */
+
 
 .create-event {
   min-height: 100vh;
@@ -203,7 +201,7 @@
   padding: 14px 28px;
 }
 
-/* AI Smart Pricing Advisor */
+
 .ai-pricing-section {
   background: rgba(255, 255, 255, 0.06);
   border: 2px solid rgba(102, 126, 234, 0.3);

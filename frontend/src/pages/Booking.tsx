@@ -51,7 +51,7 @@ const Booking: React.FC = () => {
 
 useEffect(() => {
     if (!loading) {
-      // Title char-by-char reveal
+      
       if (titleRef.current) {
         const chars = Array.from(titleRef.current.textContent || '');
         titleRef.current.textContent = '';
@@ -70,7 +70,7 @@ useEffect(() => {
         });
       }
 
-      // Booking form 3D scale entrance with rotation
+      
       if (formRef.current) {
         gsap.fromTo(formRef.current,
           { opacity: 0, y: 60, scale: 0.85, rotationY: -14 },
@@ -81,7 +81,7 @@ useEffect(() => {
         );
       }
 
-      // Event info slide in from left
+      
       const infoEl = document.querySelector('.event-info');
       if (infoEl) {
         gsap.fromTo(infoEl,
@@ -92,7 +92,7 @@ useEffect(() => {
     }
   }, [loading]);
 
-  // 3D tilt on booking form
+  
   const handleFormMove = useCallback((e: React.MouseEvent) => {
     const el = formRef.current;
     if (!el) return;

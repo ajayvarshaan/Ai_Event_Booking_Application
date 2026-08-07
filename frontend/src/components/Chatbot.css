@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED CHATBOT - Dark Glassmorphism
-   ============================================ */
+
 
 .chatbot-widget {
   position: fixed;
@@ -31,8 +29,7 @@
   overflow: visible;
 }
 
-/* Prevent the global button shine (::after) from spilling outside
-   now that overflow is visible on the round toggle. */
+
 .chatbot-toggle::after {
   display: none;
 }

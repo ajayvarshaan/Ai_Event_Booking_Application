@@ -47,3 +47,8 @@
 - [x] Uses the same color palette (purple/cyan/pink gradients) as the rest of the project
 - [x] Frontend `tsc --noEmit` passes cleanly
 
+## Fix 7: Add AI features documentation to guide/readme files
+- [x] `COMPLETE_GUIDE.md` — added AI features to intro, technologies, file structure, new "🤖 AI Features" section, `/api/ai` endpoints, AI features list, testing checklist, troubleshooting, next steps
+- [x] `README.md` — added AI features to feature list, project structure, env vars (`GEMINI_API_KEY`), `/api/ai` endpoints, technologies
+- [x] `PROJECT_OVERVIEW.md` — added "AI-Powered Features" section, `/api/ai` routes, frontend pages (Wishlist, Compare, PlanEvening, Dashboard, ActivityLog, Chatbot), Gemini architecture, technologies, updated future enhancements
+

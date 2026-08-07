@@ -21,20 +21,20 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Navbar entrance
+      
       gsap.fromTo(navRef.current,
         { y: -80, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }
       );
 
-      // Logo entrance with bounce
+      
       if (logoRef.current) {
         gsap.fromTo(logoRef.current,
           { scale: 0, rotation: -180, opacity: 0 },
           { scale: 1, rotation: 0, opacity: 1, duration: 0.8, ease: 'back.out(2)', delay: 0.2 }
         );
 
-        // Continuous subtle float
+        
         gsap.to(logoRef.current, {
           y: -3,
           duration: 2,
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
         });
       }
 
-      // Nav links staggered entrance
+      
       if (linksRef.current) {
         const links = linksRef.current.querySelectorAll('a');
         gsap.fromTo(links,
@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
         );
       }
 
-      // Auth section entrance
+      
       if (authRef.current) {
         gsap.fromTo(authRef.current,
           { opacity: 0, x: 30 },
@@ -65,12 +65,12 @@ const Navbar: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // Close mobile menu when route changes
+  
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Animate mobile menu open/close
+  
   useEffect(() => {
     if (mobileMenuRef.current) {
       if (menuOpen) {
@@ -91,7 +91,7 @@ const Navbar: React.FC = () => {
     }
   }, [menuOpen]);
 
-  // Magnetic effect for nav links
+  
   const handleLinkMove = useCallback((e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
@@ -115,7 +115,7 @@ const Navbar: React.FC = () => {
     });
   }, []);
 
-  // Magnetic effect for auth buttons
+  
   const handleAuthMove = useCallback((e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
@@ -177,7 +177,7 @@ const Navbar: React.FC = () => {
           <FaCalendarAlt style={{ marginRight: '8px' }} /> EventHub
         </Link>
 
-        {/* Hamburger toggle - mobile only */}
+        {}
         <button
           ref={hamburgerRef}
           className={`hamburger ${menuOpen ? 'open' : ''}`}
@@ -235,7 +235,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {}
       <div className={`mobile-menu ${menuOpen ? 'open' : ''}`} ref={mobileMenuRef}>
         <Link to="/home" className="mobile-menu-link" onClick={closeMenu}>Events</Link>
         {isAuthenticated && (

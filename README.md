@@ -1,6 +1,6 @@
 # Event Booking System - MERN + TypeScript + GSAP
 
-A full-stack event booking application built with MongoDB, Express, React, Node.js, TypeScript, and advanced GSAP animations.
+A full-stack event booking application built with MongoDB, Express, React, Node.js, TypeScript, advanced GSAP animations, and **Google Gemini AI**.
 
 ## Features
 
@@ -9,6 +9,15 @@ A full-stack event booking application built with MongoDB, Express, React, Node.
 - 📅 Event creation and management
 - 🎫 Seat booking system
 - 👤 User profile and booking history
+- 🤖 **AI-powered EventAI chatbot**
+- 🔍 **AI natural-language event search**
+- ⭐ **AI personalized event recommendations**
+- 🌙 **AI Plan Evening itinerary generator**
+- 📝 **AI event description generator (admin)**
+- 📊 **AI review summarizer & sentiment analysis**
+- 💰 **AI smart pricing advisor (admin)**
+- 🎟️ **AI booking assistant & confirmation**
+- 📈 **AI demand forecast & sell-out risk dashboard (admin)**
 - 📱 Responsive design
 - ⚡ TypeScript for type safety
 
@@ -19,10 +28,11 @@ event-booking/
 ├── backend/          # Node.js + Express + TypeScript
 │   ├── src/
 │   │   ├── config/   # Database configuration
-│   │   ├── controllers/
+│   │   ├── controllers/  # auth, event, booking, AI controllers
 │   │   ├── middleware/
 │   │   ├── models/
-│   │   ├── routes/
+│   │   ├── routes/   # auth, event, booking, AI routes
+│   │   ├── services/ # AI service (Google Gemini)
 │   │   └── server.ts
 │   ├── .env
 │   ├── package.json
@@ -31,10 +41,10 @@ event-booking/
 └── frontend/         # React + TypeScript + GSAP
     ├── src/
     │   ├── animations/    # GSAP animation utilities
-    │   ├── components/    # Reusable components
+    │   ├── components/    # Reusable components (Navbar, Chatbot, etc.)
     │   ├── context/       # Auth context
-    │   ├── pages/         # Page components
-    │   ├── services/      # API services
+    │   ├── pages/         # Page components (Home, PlanEvening, Admin, etc.)
+    │   ├── services/      # API services (incl. aiAPI)
     │   ├── styles/        # Global styles
     │   ├── App.tsx
     │   └── index.tsx
@@ -68,6 +78,7 @@ PORT=5000
 MONGODB_URI=mongodb://localhost:27017/event-booking
 JWT_SECRET=your_jwt_secret_key_here
 NODE_ENV=development
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 4. Start the backend server:
@@ -115,6 +126,18 @@ Frontend will run on http://localhost:3000
 - GET `/api/bookings/my-bookings` - Get user bookings (protected)
 - PUT `/api/bookings/:id/cancel` - Cancel booking (protected)
 
+### AI (Google Gemini)
+- POST `/api/ai/chat` - AI chatbot assistant (protected)
+- POST `/api/ai/recommend` - AI event recommendations (protected)
+- POST `/api/ai/personalized` - Personalized recommendations (protected)
+- POST `/api/ai/search` - Natural-language event search (protected)
+- POST `/api/ai/itinerary` - Smart evening itinerary (protected)
+- POST `/api/ai/generate-description` - AI description generator (protected)
+- POST `/api/ai/summarize-reviews` - AI review summarizer (protected)
+- POST `/api/ai/pricing-advice` - AI pricing advisor (protected)
+- POST `/api/ai/booking-assistant` - AI booking assistant (protected)
+- POST `/api/ai/demand-forecast` - AI demand forecast (protected)
+
 ## GSAP Animations
 
 The application includes advanced GSAP animations:
@@ -144,6 +167,7 @@ The application includes advanced GSAP animations:
 - TypeScript
 - JWT for authentication
 - bcryptjs for password hashing
+- Google Gemini AI (@google/generative-ai)
 
 ### Frontend
 - React 18

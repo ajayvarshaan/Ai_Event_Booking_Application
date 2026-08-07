@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-// Connect to MongoDB
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/event-booking')
   .then(() => console.log('MongoDB Connected'))
   .catch(err => {
@@ -46,12 +46,12 @@ async function checkBookings() {
   try {
     console.log('\n📊 Checking Bookings...\n');
 
-    // Get all bookings
+    
     const allBookings = await Booking.find().populate('user', 'name email role').populate('event', 'title');
     
     console.log(`Total Bookings: ${allBookings.length}\n`);
 
-    // Group by user
+    
     const bookingsByUser = {};
     
     allBookings.forEach(booking => {
@@ -79,7 +79,7 @@ async function checkBookings() {
       });
     });
 
-    // Display bookings by user
+    
     console.log('📋 Bookings by User:\n');
     
     for (const [userId, userData] of Object.entries(bookingsByUser)) {
@@ -98,7 +98,7 @@ async function checkBookings() {
       console.log('');
     }
 
-    // Check for duplicates
+    
     console.log('\n🔍 Checking for Duplicate Bookings...\n');
     
     let duplicatesFound = false;
@@ -125,7 +125,7 @@ async function checkBookings() {
       console.log('✅ No duplicate bookings found!\n');
     }
 
-    // Summary
+    
     console.log('\n📊 Summary:\n');
     console.log(`Total Users with Bookings: ${Object.keys(bookingsByUser).length}`);
     console.log(`Total Bookings: ${allBookings.length}`);

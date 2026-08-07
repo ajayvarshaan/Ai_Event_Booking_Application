@@ -56,7 +56,7 @@ const activitySchema = new Schema<IActivity>({
   }
 });
 
-// Index for faster queries
+
 activitySchema.index({ createdAt: -1 });
 activitySchema.index({ user: 1, createdAt: -1 });
 activitySchema.index({ action: 1, createdAt: -1 });

@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ============ BASIC ANIMATIONS ============
+
 export const fadeInUp = (element: HTMLElement | null, delay: number = 0): void => {
   if (!element) return;
   gsap.fromTo(
@@ -269,7 +269,7 @@ export const morphShape = (element: HTMLElement | null): void => {
   });
 };
 
-// ============ ENHANCED COLORFUL ANIMATIONS ============
+
 
 export const glowEffect = (element: HTMLElement | null, color: string = '#667eea'): void => {
   if (!element) return;
@@ -564,9 +564,9 @@ export const skewAnimation = (element: HTMLElement | null): void => {
   });
 };
 
-// ============ ADVANCED UNIFIED ANIMATIONS ============
 
-// 3D Tilt effect for cards
+
+
 export const tilt3D = (element: HTMLElement | null, intensity: number = 6): void => {
   if (!element) return;
   
@@ -601,7 +601,7 @@ export const tilt3D = (element: HTMLElement | null, intensity: number = 6): void
   element.addEventListener('mouseleave', onLeave);
 };
 
-// Magnetic button effect
+
 export const magneticButton = (element: HTMLElement | null, strength: number = 0.25): void => {
   if (!element) return;
   
@@ -631,7 +631,7 @@ export const magneticButton = (element: HTMLElement | null, strength: number = 0
   element.addEventListener('mouseleave', onLeave);
 };
 
-// Animated counter for numbers
+
 export const animateCounter = (element: HTMLElement | null, finalValue: number, prefix: string = '', duration: number = 1.5): void => {
   if (!element) return;
   const obj = { val: 0 };
@@ -648,7 +648,7 @@ export const animateCounter = (element: HTMLElement | null, finalValue: number, 
   });
 };
 
-// Word-by-word text reveal with 3D rotation
+
 export const wordReveal3D = (element: HTMLElement | null, stagger: number = 0.1): void => {
   if (!element) return;
   const words = element.textContent?.split(' ') || [];
@@ -675,7 +675,7 @@ export const wordReveal3D = (element: HTMLElement | null, stagger: number = 0.1)
   });
 };
 
-// Character-by-character reveal
+
 export const charReveal = (element: HTMLElement | null, stagger: number = 0.03): void => {
   if (!element) return;
   const chars = Array.from(element.textContent || '');
@@ -702,7 +702,7 @@ export const charReveal = (element: HTMLElement | null, stagger: number = 0.03):
   });
 };
 
-// Scroll-triggered section reveal
+
 export const scrollSectionReveal = (element: HTMLElement | null, from: string = 'top 85%'): void => {
   if (!element) return;
   gsap.fromTo(element,
@@ -720,7 +720,7 @@ export const scrollSectionReveal = (element: HTMLElement | null, from: string = 
   );
 };
 
-// Staggered card entrance with 3D flip
+
 export const staggerCards3D = (elements: HTMLElement[] | NodeListOf<Element>, stagger: number = 0.15): void => {
   if (!elements || elements.length === 0) return;
   gsap.fromTo(elements,
@@ -738,7 +738,7 @@ export const staggerCards3D = (elements: HTMLElement[] | NodeListOf<Element>, st
   );
 };
 
-// Animated progress bar
+
 export const animateProgressBar = (element: HTMLElement | null, targetWidth: string): void => {
   if (!element) return;
   gsap.fromTo(element,
@@ -751,7 +751,7 @@ export const animateProgressBar = (element: HTMLElement | null, targetWidth: str
   );
 };
 
-// Floating orbs background animation
+
 export const animateFloatingOrbs = (elements: HTMLElement[] | NodeListOf<Element>): void => {
   if (!elements || elements.length === 0) return;
   elements.forEach((orb, i) => {
@@ -767,7 +767,7 @@ export const animateFloatingOrbs = (elements: HTMLElement[] | NodeListOf<Element
   });
 };
 
-// Continuous glow pulse
+
 export const glowPulse = (element: HTMLElement | null, color: string = '#667eea'): void => {
   if (!element) return;
   gsap.to(element, {
@@ -779,7 +779,7 @@ export const glowPulse = (element: HTMLElement | null, color: string = '#667eea'
   });
 };
 
-// Shimmer sweep effect
+
 export const shimmerSweep = (element: HTMLElement | null): void => {
   if (!element) return;
   gsap.fromTo(element,

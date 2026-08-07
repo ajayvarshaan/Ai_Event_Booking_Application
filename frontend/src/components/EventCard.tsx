@@ -57,12 +57,12 @@ const EventCard: React.FC<EventCardProps> = ({
     }
   }, []);
 
-  // Force re-render when event date changes
+  
   useEffect(() => {
     setKey(prev => prev + 1);
   }, [event.date]);
 
-  // 3D Tilt effect on card hover
+  
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const card = cardRef.current;
     const image = imageRef.current;
@@ -86,7 +86,7 @@ const EventCard: React.FC<EventCardProps> = ({
       ease: 'power2.out'
     });
 
-    // Parallax effect on image
+    
     if (image) {
       gsap.to(image, {
         x: (x - centerX) * 0.05,
@@ -124,7 +124,7 @@ const EventCard: React.FC<EventCardProps> = ({
     }
   }, []);
 
-  // Magnetic button effect
+  
   const handleMagneticMove = useCallback((e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
@@ -149,7 +149,7 @@ const EventCard: React.FC<EventCardProps> = ({
     });
   }, []);
 
-  // Button click pulse animation
+  
   const handleClickPulse = useCallback((e: React.MouseEvent) => {
     const target = e.currentTarget as HTMLElement;
     gsap.fromTo(target,

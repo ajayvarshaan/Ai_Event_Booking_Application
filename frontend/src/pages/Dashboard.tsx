@@ -108,7 +108,7 @@ const [loading, setLoading] = useState(true);
         setUserBookingStats(activeStats);
         setCanceledBookingStats(canceledStats);
 
-        // Calculate dashboard stats
+        
         const totalUsers = activeStats.length;
         const totalRevenue = activeStats.reduce((sum: number, user: UserBookingStat) => sum + user.totalSpent, 0);
         const totalBookings = activeStats.reduce((sum: number, user: UserBookingStat) => sum + user.totalBookings, 0);
@@ -245,7 +245,7 @@ fetchStats();
       const ctx = gsap.context(() => {
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-        // Title entrance
+        
         if (titleRef.current) {
           tl.fromTo(titleRef.current,
             { opacity: 0, y: 40, scale: 0.9 },
@@ -253,7 +253,7 @@ fetchStats();
           );
         }
 
-        // Stat cards stagger entrance with rotation
+        
         tl.fromTo('.stat-card',
           { opacity: 0, y: 50, scale: 0.85, rotationX: -15 },
           {
@@ -261,7 +261,7 @@ fetchStats();
             duration: 0.7, stagger: 0.1, ease: 'back.out(1.7)',
             transformPerspective: 800,
             onComplete: () => {
-              // Animate stat numbers counting up
+              
               document.querySelectorAll('.stat-content h3').forEach((el: Element) => {
                 const target = el as HTMLElement;
                 const text = target.textContent || '0';
@@ -287,7 +287,7 @@ fetchStats();
           }
         );
 
-        // Search & filter section
+        
         gsap.fromTo('.search-filter-section',
           { opacity: 0, y: 60 },
           {
@@ -296,7 +296,7 @@ fetchStats();
           }
         );
 
-        // Tab navigation
+        
         gsap.fromTo('.tab-navigation',
           { opacity: 0, y: 50 },
           {
@@ -305,7 +305,7 @@ fetchStats();
           }
         );
 
-        // Booking cards stagger reveal
+        
         gsap.fromTo('.booking-card',
           { opacity: 0, y: 60, scale: 0.92, rotationY: -8 },
           {
@@ -316,7 +316,7 @@ fetchStats();
           }
         );
 
-// Quick actions stagger
+
         gsap.fromTo('.action-btn',
           { opacity: 0, y: 40, scale: 0.9 },
           {
@@ -326,7 +326,7 @@ fetchStats();
           }
         );
 
-        // Event comparison section reveal
+        
         gsap.fromTo('.event-compare-section',
           { opacity: 0, y: 80 },
           {
@@ -335,7 +335,7 @@ fetchStats();
           }
         );
 
-        // Compare picker chips
+        
         gsap.fromTo('.event-picker-chip',
           { opacity: 0, y: 30, scale: 0.9 },
           {
@@ -344,7 +344,7 @@ fetchStats();
           }
         );
 
-        // Compare cards flip entrance
+        
         gsap.fromTo('.event-compare-card',
           { opacity: 0, y: 80, scale: 0.88, rotationY: -18 },
           {
@@ -394,7 +394,6 @@ fetchStats();
       <div className="container">
         <h1 className="dashboard-title" ref={titleRef}><FaChartLine style={{ marginRight: '12px' }} /> Admin Dashboard</h1>
         
-        {/* Summary Stats */}
         <div className="stats-grid">
           <div className="stat-card" onMouseMove={handleStatMove} onMouseLeave={handleStatLeave} style={{ transformStyle: 'preserve-3d' }}>
             <div className="stat-icon"><FaUsers /></div>
@@ -453,7 +452,7 @@ fetchStats();
           </div>
         </div>
 
-        {/* Search and Filter Section */}
+        {}
         <div className="search-filter-section">
           <div className="search-box">
             <FaSearch className="dashboard-search-icon" />
@@ -493,7 +492,6 @@ fetchStats();
           </div>
         </div>
 
-        {/* Tab Navigation */}
         <div className="tab-navigation">
           <button
             className={`tab-btn ${activeTab === 'active' ? 'active' : ''}`}
@@ -513,7 +511,7 @@ fetchStats();
           </button>
         </div>
 
-        {/* User Booking Details with Event Information */}
+        {}
         <div className="user-booking-details-section">
           <h2>{activeTab === 'active' ? <><FaCheckCircle style={{ marginRight: '8px' }} /> Active Bookings</> : <><FaExclamationCircle style={{ marginRight: '8px' }} /> Canceled Bookings</>} ({filteredData.length})</h2>
           
@@ -525,7 +523,6 @@ fetchStats();
             <div className="booking-details-list">
               {filteredData.map((userStat) => (
                 <div key={userStat._id} className={`booking-card ${activeTab === 'canceled' ? 'canceled' : ''}`}>
-                  {/* User Information Header */}
                   <div className="user-header">
                     <div className={`user-avatar ${activeTab === 'canceled' ? 'canceled' : ''}`}>
                       {userStat.userName.charAt(0).toUpperCase()}
@@ -536,7 +533,6 @@ fetchStats();
                     </div>
                   </div>
 
-                  {/* Events List */}
                   <div className="events-section">
                     <h4 className="events-title">
                       {activeTab === 'active' ? <><FaGift style={{ marginRight: '6px' }} /> Booked Events</> : <><FaExclamationCircle style={{ marginRight: '6px' }} /> Canceled Events</>}
@@ -563,7 +559,7 @@ fetchStats();
                     ))}
                   </div>
 
-                  {/* User Summary */}
+                  {}
                   <div className={`user-summary ${activeTab === 'canceled' ? 'canceled' : ''}`}>
                     <div className="summary-item">
                       <span className="summary-label">
@@ -596,7 +592,6 @@ fetchStats();
           )}
         </div>
 
-{/* Event Comparison Section */}
         <div className="event-compare-section" ref={compareRef}>
           <div className="edit-compare-header">
 <span className="edit-compare-kicker"><FaBalanceScale style={{ marginRight: '6px' }} /> Event Comparison</span>
@@ -604,7 +599,6 @@ fetchStats();
             <p>Select up to 3 events to compare price, capacity, demand, and seat availability.</p>
           </div>
 
-          {/* Event selector */}
           <div className="event-picker">
             {allEvents.length === 0 ? (
               <p className="compare-no-events">No events available to compare.</p>
@@ -626,7 +620,7 @@ fetchStats();
             )}
           </div>
 
-          {/* Comparison cards */}
+          {}
           {compareEvents.length > 0 && (
             <div className="compare-cards-grid">
               {compareEvents.map((event) => (
@@ -674,7 +668,6 @@ fetchStats();
           )}
         </div>
 
-        {/* Quick Actions */}
         <div className="quick-actions">
           <h2><FaBolt style={{ marginRight: '8px' }} /> Quick Actions</h2>
           <div className="action-buttons">

@@ -22,7 +22,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ eventId, onWishlistChan
     }
   }, [eventId, isAuthenticated]);
 
-  // Heart pop animation when wishlist state changes
+  
   useEffect(() => {
     if (buttonRef.current) {
       gsap.fromTo(buttonRef.current,
@@ -36,7 +36,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ eventId, onWishlistChan
         }
       );
 
-      // Glow effect when active
+      
       if (isInWishlist) {
         gsap.to(buttonRef.current, {
           boxShadow: '0 0 20px rgba(245, 87, 108, 0.6), 0 4px 15px rgba(245, 87, 108, 0.4)',
@@ -54,7 +54,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ eventId, onWishlistChan
     }
   }, [isInWishlist]);
 
-  // Magnetic hover effect
+  
   const handleMagneticMove = useCallback((e: React.MouseEvent) => {
     const btn = buttonRef.current;
     if (!btn) return;
@@ -95,7 +95,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({ eventId, onWishlistChan
     if (!isAuthenticated) return;
 
     setLoading(true);
-    // Quick pulse on click
+    
     if (buttonRef.current) {
       gsap.fromTo(buttonRef.current,
         { scale: 0.7 },

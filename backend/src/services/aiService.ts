@@ -6,7 +6,7 @@ import Review from '../models/Review';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
-// Use a current stable model - gemini-3.5-flash is the latest available
+
 const MODEL_NAME = 'gemini-3.5-flash';
 
 const safetySettings = [
@@ -87,7 +87,7 @@ export const chatWithGemini = async (
       throw new Error('GEMINI_API_KEY is not configured on the server');
     }
 
-    // Fetch fresh events from the database
+    
     const eventDocs = await Event.find().populate('organizer', 'name email').lean().exec();
     const events: EventContext[] = eventDocs.map((doc: any) => ({
       _id: String(doc._id),
@@ -109,7 +109,7 @@ export const chatWithGemini = async (
       systemInstruction: buildSystemPrompt(events)
     });
 
-    // Map chat history: filter to user/model turns, include the latest user message
+    
     const history = messages
       .filter((m) => m.role === 'user' || m.role === 'model')
       .map((m) => ({
@@ -313,7 +313,7 @@ Only recommend events from the CURRENT AVAILABLE EVENTS list. Do not invent even
     );
     const text = result.response.text();
 
-    // Extract event IDs from the response
+    
     const eventIds: string[] = [];
     const idRegex = /ID:\s*([a-fA-F0-9]{24})/g;
     let match;
@@ -460,7 +460,7 @@ Format as:
   }
 };
 
-// ===== Feature #4: AI Event Description Generator =====
+
 export const generateEventDescription = async (
   eventDetails: {
     title?: string;
@@ -531,7 +531,7 @@ CAPACITY: [suggested capacity number only]`
   }
 };
 
-// ===== Feature #5: AI Review Summarizer =====
+
 export const summarizeEventReviews = async (
   eventId: string
 ): Promise<{ summary: string; sentiment: string; positivePoints: string[]; negativePoints: string[] }> => {
@@ -604,7 +604,7 @@ NEGATIVE: [comma-separated list of negative points]`
   }
 };
 
-// ===== Feature #6: AI Smart Pricing Advisor =====
+
 export const getPricingAdvice = async (
   eventId: string
 ): Promise<{ advice: string; recommendedPrice: number; riskLevel: string }> => {
@@ -671,7 +671,7 @@ RISK: [low | medium | high]`
   }
 };
 
-// ===== Feature #7: AI Booking Confirmation Assistant =====
+
 export const getBookingAssistant = async (
   eventId: string,
   seats: number
@@ -724,7 +724,7 @@ TIPS: [comma-separated list of 3-4 preparation tips]`
   }
 };
 
-// ===== Feature #8: AI Demand Forecasting Dashboard =====
+
 export const getDemandForecast = async (): Promise<{
   forecast: string;
   sellOutRisks: { eventId: string; title: string; risk: string }[];

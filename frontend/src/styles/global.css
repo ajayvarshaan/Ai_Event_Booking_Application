@@ -1,9 +1,7 @@
-/* ============================================
-   EVENTHUB UNIFIED DESIGN SYSTEM
-   ============================================ */
+
 
 :root {
-  /* Primary Colors */
+  
   --primary: #667eea;
   --primary-dark: #5568d3;
   --secondary: #764ba2;
@@ -16,7 +14,7 @@
   --success: #48bb78;
   --warning: #ed8936;
 
-  /* Background Colors */
+  
   --bg-dark: #0f0c29;
   --bg-mid: #302b63;
   --bg-light: #24243e;
@@ -25,7 +23,7 @@
   --bg-input: rgba(255, 255, 255, 0.06);
   --bg-hover: rgba(255, 255, 255, 0.12);
 
-  /* Text Colors */
+  
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.75);
   --text-muted: rgba(255, 255, 255, 0.5);
@@ -33,7 +31,7 @@
   --text-dark-secondary: #4a5568;
   --text-dark-muted: #718096;
 
-  /* Border & Shadow */
+  
   --border-light: rgba(255, 255, 255, 0.15);
   --border-hover: rgba(255, 255, 255, 0.3);
   --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -42,14 +40,14 @@
   --shadow-primary: 0 8px 24px rgba(102, 126, 234, 0.4);
   --shadow-primary-lg: 0 12px 40px rgba(102, 126, 234, 0.5);
 
-  /* Border Radius */
+  
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-xl: 28px;
   --radius-pill: 999px;
 
-  /* Spacing */
+  
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -57,12 +55,12 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* Transitions */
+  
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Fonts */
+  
   --font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
@@ -148,9 +146,7 @@ body::before {
   padding: 0 20px;
 }
 
-/* ============================================
-   UNIFIED BUTTON STYLES
-   ============================================ */
+
 
 button {
   cursor: pointer;
@@ -201,7 +197,7 @@ button:disabled::after {
   display: none;
 }
 
-/* Primary Button */
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   color: white;
@@ -226,7 +222,7 @@ button:disabled::after {
   transform: translateY(-3px);
 }
 
-/* Secondary Button */
+
 .btn-secondary {
   background: rgba(255, 255, 255, 0.95);
   color: var(--primary);
@@ -249,7 +245,7 @@ button:disabled::after {
     inset 0 -2px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Danger Button */
+
 .btn-danger {
   background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
   color: white;
@@ -270,7 +266,7 @@ button:disabled::after {
     inset 0 -2px 0 rgba(0, 0, 0, 0.2);
 }
 
-/* Ghost Button */
+
 .btn-ghost {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
@@ -284,9 +280,7 @@ button:disabled::after {
   border-color: var(--border-hover);
 }
 
-/* ============================================
-   UNIFIED INPUT STYLES
-   ============================================ */
+
 
 input, textarea, select {
   padding: 14px 18px;
@@ -312,9 +306,7 @@ input::placeholder, textarea::placeholder {
   color: var(--text-dark-muted);
 }
 
-/* ============================================
-   UNIFIED CARD STYLES
-   ============================================ */
+
 
 .card {
   background: var(--bg-card-solid);
@@ -339,7 +331,7 @@ input::placeholder, textarea::placeholder {
   border-color: rgba(102, 126, 234, 0.5);
 }
 
-/* Glass Card (dark theme) */
+
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: blur(30px);
@@ -366,9 +358,7 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-4px);
 }
 
-/* ============================================
-   UNIFIED CHIP / PILL STYLES
-   ============================================ */
+
 
 .chip {
   display: inline-flex;
@@ -399,9 +389,7 @@ input::placeholder, textarea::placeholder {
   box-shadow: var(--shadow-primary);
 }
 
-/* ============================================
-   UNIFIED KICKER / BADGE STYLES
-   ============================================ */
+
 
 .kicker {
   display: inline-block;
@@ -417,9 +405,7 @@ input::placeholder, textarea::placeholder {
   border: 1px solid rgba(102, 126, 234, 0.3);
 }
 
-/* ============================================
-   UNIFIED SECTION STYLES
-   ============================================ */
+
 
 .section {
   margin: 0 20px 40px 20px;
@@ -460,9 +446,7 @@ input::placeholder, textarea::placeholder {
   line-height: 1.7;
 }
 
-/* ============================================
-   UNIFIED SEARCH & FILTER
-   ============================================ */
+
 
 .search-filter-section {
   margin: 0 20px 60px 20px;
@@ -578,9 +562,7 @@ input::placeholder, textarea::placeholder {
   background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
 }
 
-/* ============================================
-   UNIFIED UTILITY CLASSES
-   ============================================ */
+
 
 .text-center {
   text-align: center;
@@ -634,9 +616,7 @@ input::placeholder, textarea::placeholder {
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* ============================================
-   UNIFIED PAGE HEADER STYLES
-   ============================================ */
+
 
 .page-header {
   text-align: center;
@@ -661,9 +641,7 @@ input::placeholder, textarea::placeholder {
   line-height: 1.6;
 }
 
-/* ============================================
-   UNIFIED EMPTY STATE
-   ============================================ */
+
 
 .empty-state {
   text-align: center;
@@ -686,9 +664,7 @@ input::placeholder, textarea::placeholder {
   margin-bottom: 24px;
 }
 
-/* ============================================
-   UNIFIED GRID STYLES
-   ============================================ */
+
 
 .events-grid {
   display: grid;
@@ -701,9 +677,7 @@ input::placeholder, textarea::placeholder {
   perspective: 1200px;
 }
 
-/* ============================================
-   UNIFIED ANIMATION CLASSES
-   ============================================ */
+
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
@@ -723,9 +697,7 @@ input::placeholder, textarea::placeholder {
   50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
+
 
 @media (max-width: 768px) {
   body {

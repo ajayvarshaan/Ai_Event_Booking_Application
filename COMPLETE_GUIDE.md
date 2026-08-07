@@ -10,6 +10,7 @@ A full-stack MERN application with TypeScript, Vite, and advanced GSAP animation
 - ✅ Booking system with seat management
 - ✅ Role-based access (User/Admin)
 - ✅ RESTful API
+- ✅ **AI-powered features** (Google Gemini) — chat, recommendations, search, itineraries
 
 ### Frontend (React + TypeScript + Vite + GSAP)
 - ✅ Lightning-fast Vite dev server
@@ -17,6 +18,7 @@ A full-stack MERN application with TypeScript, Vite, and advanced GSAP animation
 - ✅ Advanced GSAP animations
 - ✅ Responsive design
 - ✅ Complete booking flow
+- ✅ **AI-powered UI** — chatbot, smart search, AI recommendations, plan-evening
 
 ---
 
@@ -58,6 +60,7 @@ npm run dev
 - TypeScript v5
 - JWT v9
 - bcryptjs v2
+- **Google Gemini AI (`@google/generative-ai`)**
 
 ### Frontend
 - React v18
@@ -91,7 +94,8 @@ event-booking/
 │   │   ├── controllers/
 │   │   │   ├── authController.ts
 │   │   │   ├── eventController.ts
-│   │   │   └── bookingController.ts
+│   │   │   ├── bookingController.ts
+│   │   │   └── aiController.ts
 │   │   ├── middleware/
 │   │   │   └── auth.ts
 │   │   ├── models/
@@ -101,7 +105,10 @@ event-booking/
 │   │   ├── routes/
 │   │   │   ├── authRoutes.ts
 │   │   │   ├── eventRoutes.ts
-│   │   │   └── bookingRoutes.ts
+│   │   │   ├── bookingRoutes.ts
+│   │   │   └── aiRoutes.ts
+│   │   ├── services/
+│   │   │   └── aiService.ts
 │   │   └── server.ts
 │   ├── .env
 │   ├── .gitignore
@@ -178,6 +185,37 @@ Located in `frontend/src/animations/gsapAnimations.ts`:
 
 ---
 
+## 🤖 AI Features (Google Gemini)
+
+The app includes a full suite of AI-powered features powered by the **Google Gemini API** (`@google/generative-ai`). All AI endpoints live under `/api/ai` and require a valid `GEMINI_API_KEY` on the backend.
+
+### Backend Configuration
+
+Add the following to `backend/.env`:
+
+```
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+> Get a free key at [Google AI Studio](https://aistudio.google.com/). The AI service uses model `gemini-3.5-flash` with safety settings for harassment, hate speech, sexually explicit, and dangerous content.
+
+### Where the AI Lives
+
+| Layer      | Files |
+|------------|-------|
+| Backend    | `backend/src/services/aiService.ts`, `backend/src/controllers/aiController.ts`, `backend/src/routes/aiRoutes.ts` |
+| Frontend   | `frontend/src/components/Chatbot.tsx` + `.css`, `frontend/src/pages/PlanEvening.tsx`, `frontend/src/pages/Home.tsx` (AI search/recommend), `frontend/src/pages/AdminDashboard.tsx` (AI tools), `frontend/src/services/api.ts` (`aiAPI`) |
+
+### AI Capabilities in the UI
+
+- **EventAI Chatbot** — floating widget (bottom-left) that answers questions with live event data
+- **Home page** — AI-powered search bar + AI recommendations section
+- **Plan Evening** — generates a smart itinerary based on vibe, budget, and start time
+- **Admin Dashboard** — AI description generator, review summarizer, pricing advisor, demand forecast
+- **Booking page** — AI booking assistant confirmation + prep tips
+
+---
+
 ## 🔐 API Endpoints
 
 ### Authentication (`/api/auth`)
@@ -196,6 +234,18 @@ Located in `frontend/src/animations/gsapAnimations.ts`:
 - `POST /` - Create booking (Protected)
 - `GET /my-bookings` - Get user bookings (Protected)
 - `PUT /:id/cancel` - Cancel booking (Protected)
+
+### AI (`/api/ai`) — Google Gemini
+- `POST /chat` - Conversational AI assistant (Protected)
+- `POST /recommend` - AI event recommendations by vibe/budget/date (Protected)
+- `POST /personalized` - Personalized recommendations from user's booking & wishlist history (Protected)
+- `POST /search` - Natural-language event search (Protected)
+- `POST /itinerary` - Smart evening itinerary planner (Protected)
+- `POST /generate-description` - AI event description + pricing/capacity suggestions (Protected)
+- `POST /summarize-reviews` - AI review summarizer + sentiment analysis (Protected)
+- `POST /pricing-advice` - Smart pricing advisor based on demand & similar events (Protected)
+- `POST /booking-assistant` - Booking confirmation + preparation tips (Protected)
+- `POST /demand-forecast` - AI demand forecasting & sell-out risk dashboard (Protected)
 
 ---
 
@@ -222,6 +272,18 @@ Located in `frontend/src/animations/gsapAnimations.ts`:
 - ✅ Vite HMR
 - ✅ GSAP animations
 - ✅ Responsive design
+
+### AI Features (Google Gemini)
+- ✅ **AI Chatbot (EventAI)** — floating chat widget that answers questions about events, bookings, and platform features
+- ✅ **AI Recommendations** — event suggestions by vibe, budget, category, or date
+- ✅ **Personalized Recommendations** — tailored to each user's booking history & wishlist
+- ✅ **Natural-Language Search** — type like "jazz concerts under $50 this weekend" and get matching events
+- ✅ **Smart Itinerary (Plan Evening)** — generates an evening plan with 2-4 events matching your vibe & budget
+- ✅ **AI Event Description Generator** — admins auto-generate compelling descriptions + suggested price/capacity
+- ✅ **AI Review Summarizer** — sentiment analysis + key positive/negative points from event reviews
+- ✅ **AI Pricing Advisor** — recommends optimal pricing based on demand ratio & similar events
+- ✅ **AI Booking Assistant** — friendly confirmation message + preparation tips
+- ✅ **AI Demand Forecast** — predicts sell-out risks and overall platform health for admins
 
 ---
 
@@ -321,6 +383,13 @@ rmdir /s /q node_modules
 npm install
 ```
 
+### AI Features Not Working
+1. Check `backend/.env` has `GEMINI_API_KEY` set
+2. Verify the backend restarted after adding the key (env vars load at startup)
+3. AI endpoints require login (JWT token) — make sure you're authenticated
+4. Check the backend console for Gemini error logs
+5. Ensure `@google/generative-ai` is installed: `cd backend && npm install`
+
 ---
 
 ## 📚 Documentation Files
@@ -346,6 +415,12 @@ npm install
 - [ ] Admin can create event
 - [ ] Animations work smoothly
 - [ ] Responsive on mobile
+- [ ] `GEMINI_API_KEY` set in `backend/.env`
+- [ ] AI Chatbot answers event questions
+- [ ] AI recommendations return matching events
+- [ ] Natural-language search returns results
+- [ ] Plan Evening generates an itinerary
+- [ ] Admin AI tools (description gen, pricing, forecast) work
 
 ---
 
@@ -381,6 +456,11 @@ npm install
 6. ✅ Create events as admin
 7. ✅ Book events as user
 8. ✅ Explore animations
+9. ✅ Add `GEMINI_API_KEY` to `backend/.env`
+10. ✅ Chat with the EventAI chatbot
+11. ✅ Try AI-powered search and recommendations
+12. ✅ Generate a Plan Evening itinerary
+13. ✅ Use admin AI tools (description gen, pricing advice, demand forecast)
 
 ---
 

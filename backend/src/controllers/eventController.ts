@@ -33,7 +33,7 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
       availableSeats: req.body.capacity
     });
 
-    // Log activity
+    
     try {
       await logActivity({
         user: req.user,
@@ -67,7 +67,7 @@ export const updateEvent = async (req: AuthRequest, res: Response): Promise<void
     }
     const updated = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-    // Log activity
+    
     try {
       await logActivity({
         user: req.user,
@@ -99,7 +99,7 @@ export const deleteEvent = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    // Log activity before deletion
+    
     try {
       await logActivity({
         user: req.user,

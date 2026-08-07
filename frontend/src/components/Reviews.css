@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED REVIEWS - Dark Glassmorphism
-   ============================================ */
+
 
 .reviews-section {
   background: rgba(255, 255, 255, 0.08);
@@ -310,7 +308,7 @@
   font-size: 15px;
 }
 
-/* AI Review Summarizer */
+
 .ai-summarize-row {
   display: flex;
   align-items: center;

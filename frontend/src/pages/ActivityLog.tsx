@@ -29,7 +29,7 @@ const ActivityLog: React.FC = () => {
   const fetchActivities = async () => {
     try {
       const response = await activityAPI.getRecent(50);
-      // Filter to show only booking-related activities
+      
       const bookingActivities = response.data.filter((activity: Activity) => 
         activity.action === 'booking_created' || activity.action === 'booking_cancelled'
       );
@@ -41,14 +41,14 @@ const ActivityLog: React.FC = () => {
     }
   };
 
-  // Master GSAP animation timeline
+  
   useEffect(() => {
     if (loading) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Title char-by-char color reveal
+      
       if (titleRef.current) {
         const text = titleRef.current.textContent || '';
         titleRef.current.innerHTML = '';
@@ -72,14 +72,14 @@ const ActivityLog: React.FC = () => {
         });
       }
 
-      // Subtitle fade in
+      
       tl.fromTo('.activity-header p',
         { opacity: 0, y: 30, scale: 0.95 },
         { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power4.out' },
         '-=0.4'
       );
 
-      // Activity items colorful stagger entrance with 3D flip
+      
       gsap.fromTo('.activity-item',
         {
           opacity: 0, x: -80, scale: 0.9, rotationY: -15
@@ -93,7 +93,7 @@ const ActivityLog: React.FC = () => {
             start: 'top 85%'
           },
           onComplete: () => {
-            // Continuous pulse on icons
+            
             document.querySelectorAll('.activity-icon').forEach((icon) => {
               gsap.to(icon, {
                 scale: 1.08,
@@ -108,7 +108,7 @@ const ActivityLog: React.FC = () => {
         }
       );
 
-      // Activity content children stagger reveal
+      
       gsap.fromTo('.activity-content',
         { opacity: 0, y: 30 },
         {
@@ -124,7 +124,7 @@ const ActivityLog: React.FC = () => {
     return () => ctx.revert();
   }, [loading, activities]);
 
-  // Colorful 3D tilt on hover
+  
   const handleItemMove = useCallback((e: React.MouseEvent) => {
     const card = e.currentTarget as HTMLElement;
     const rect = card.getBoundingClientRect();

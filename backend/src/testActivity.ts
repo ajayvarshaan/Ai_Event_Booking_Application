@@ -8,7 +8,7 @@ const testActivityLogging = async () => {
     await connectDB();
     console.log('Connected to database');
 
-    // Find a user to test with
+    
     const user = await User.findOne();
     if (!user) {
       console.log('No users found. Please create a user first.');
@@ -17,7 +17,7 @@ const testActivityLogging = async () => {
 
     console.log('Found user:', user.name, user.email);
 
-    // Create a test activity
+    
     const activity = await Activity.create({
       user: user._id,
       userName: user.name,
@@ -28,7 +28,7 @@ const testActivityLogging = async () => {
 
     console.log('Activity created successfully:', activity._id);
 
-    // Fetch all activities
+    
     const activities = await Activity.find().sort({ createdAt: -1 }).limit(10);
     console.log(`Total activities in database: ${activities.length}`);
     activities.forEach(act => {

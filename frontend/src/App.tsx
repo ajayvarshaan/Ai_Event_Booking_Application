@@ -33,10 +33,10 @@ const AppShell: React.FC = () => {
   return (
     <div ref={routeShellRef} className="app-route-shell">
       <Routes>
-        {/* Redirect root to login */}
+        {}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
-        {/* Public routes - redirect to home if authenticated */}
+        {}
         <Route
           path="/login"
           element={
@@ -54,7 +54,6 @@ const AppShell: React.FC = () => {
           }
         />
 
-        {/* Protected routes - require authentication */}
         <Route
           path="/home"
           element={
@@ -166,7 +165,7 @@ const AppShell: React.FC = () => {
           }
         />
 
-        {/* Catch all - redirect to login */}
+        {}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
       {isAuthenticated && <Chatbot />}

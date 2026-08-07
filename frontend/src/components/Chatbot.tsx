@@ -49,7 +49,7 @@ const Chatbot: React.FC = () => {
     }
   }, [isOpen]);
 
-  // Smooth GSAP toggle animation for the chat panel
+  
   useEffect(() => {
     if (isOpen) {
       if (panelRef.current) {
@@ -75,7 +75,7 @@ const Chatbot: React.FC = () => {
     }
   }, [isOpen]);
 
-  // Continuous subtle float on the toggle button when closed
+  
   useEffect(() => {
     if (!isOpen && toggleRef.current) {
       gsap.to(toggleRef.current, {
@@ -100,7 +100,7 @@ const Chatbot: React.FC = () => {
         text: m.text
       }));
 
-    // Remove leading model messages so the first entry is always a user message
+    
     while (history.length > 0 && history[0].role === 'model') {
       history.shift();
     }

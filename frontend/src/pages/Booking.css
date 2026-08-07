@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED BOOKING PAGE - Dark Glassmorphism
-   ============================================ */
+
 
 .booking-container {
   min-height: 100vh;
@@ -154,7 +152,7 @@
   background-clip: text;
 }
 
-/* AI Booking Assistant */
+
 .ai-assistant-section {
   margin-top: 25px;
   padding-top: 25px;

@@ -17,7 +17,7 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Refs for GSAP animations
+  
   const pageRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const cardWrapperRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ const Register: React.FC = () => {
   const orb2Ref = useRef<HTMLDivElement>(null);
   const orb3Ref = useRef<HTMLDivElement>(null);
 
-  // Particle system (mirrors Login page)
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -126,7 +126,7 @@ const Register: React.FC = () => {
     };
   }, []);
 
-  // Main GSAP animations
+  
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set(cardRef.current, { opacity: 0, y: 60, scale: 0.9, rotationX: 10 });
@@ -186,7 +186,7 @@ const Register: React.FC = () => {
         duration: 0.5
       }, '-=0.2');
 
-      // Floating orbs
+      
       if (orb1Ref.current) {
         gsap.to(orb1Ref.current, {
           x: 60, y: 40, scale: 1.2, duration: 8, repeat: -1, yoyo: true, ease: 'sine.inOut'
@@ -203,14 +203,14 @@ const Register: React.FC = () => {
         });
       }
 
-      // Logo continuous float
+      
       if (logoRef.current) {
         gsap.to(logoRef.current, {
           y: -8, duration: 2, repeat: -1, yoyo: true, ease: 'sine.inOut'
         });
       }
 
-      // Submit button pulse
+      
       if (submitBtnRef.current) {
         gsap.to(submitBtnRef.current, {
           boxShadow: '0 12px 40px rgba(255, 0, 150, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2) inset',
@@ -225,7 +225,7 @@ const Register: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // 3D Tilt effect on card
+  
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!cardRef.current || !cardWrapperRef.current) return;
 
@@ -274,7 +274,7 @@ const Register: React.FC = () => {
     }
   }, []);
 
-  // Magnetic button effect
+  
   const handleMagneticMove = useCallback((e: React.MouseEvent) => {
     const btn = submitBtnRef.current;
     if (!btn) return;
@@ -300,7 +300,7 @@ const Register: React.FC = () => {
     });
   }, []);
 
-  // Error shake animation
+  
   useEffect(() => {
     if (error && cardRef.current) {
       gsap.fromTo(cardRef.current,
@@ -361,25 +361,23 @@ const Register: React.FC = () => {
 
   return (
     <div className="register-page" ref={pageRef}>
-      {/* Particle canvas */}
+      {}
       <canvas ref={canvasRef} className="register-particles" />
 
-      {/* Floating orbs */}
       <div className="register-orb register-orb-1" ref={orb1Ref} />
       <div className="register-orb register-orb-2" ref={orb2Ref} />
       <div className="register-orb register-orb-3" ref={orb3Ref} />
 
-      {/* Main card */}
+      {}
       <div className="register-card-wrapper" ref={cardWrapperRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
         <div className="register-card" ref={cardRef}>
-          {/* Logo */}
+          {}
           <div className="register-logo" ref={logoRef}>
             <div className="register-logo-icon">
               <FaCalendarAlt />
             </div>
           </div>
 
-          {/* Title */}
           <div className="register-title">
             <h1 ref={titleRef}>
               {titleChars.map((char, i) => (
@@ -403,7 +401,6 @@ const Register: React.FC = () => {
             Join EventHub and start discovering amazing events
           </p>
 
-          {/* Error message */}
           {error && (
             <div className="register-error">
               <FaExclamationTriangle />
@@ -411,9 +408,9 @@ const Register: React.FC = () => {
             </div>
           )}
 
-          {/* Form */}
+          {}
           <form className="register-form" ref={formRef} onSubmit={handleSubmit}>
-            {/* Name input */}
+            {}
             <div className={`register-input-group ${focusedField === 'name' ? 'focused' : ''}`}>
               <span className="register-input-icon"><FaUser /></span>
               <input
@@ -428,7 +425,7 @@ const Register: React.FC = () => {
               />
             </div>
 
-            {/* Email input */}
+            {}
             <div className={`register-input-group ${focusedField === 'email' ? 'focused' : ''}`}>
               <span className="register-input-icon"><FaEnvelope /></span>
               <input
@@ -443,7 +440,7 @@ const Register: React.FC = () => {
               />
             </div>
 
-            {/* Password input */}
+            {}
             <div className={`register-input-group ${focusedField === 'password' ? 'focused' : ''}`}>
               <span className="register-input-icon"><FaLock /></span>
               <input
@@ -470,7 +467,7 @@ const Register: React.FC = () => {
 
             <p className="register-hint">Password must be at least 6 characters</p>
 
-            {/* Submit button */}
+            {}
             <button
               type="submit"
               className="register-submit"
@@ -490,7 +487,7 @@ const Register: React.FC = () => {
             </button>
           </form>
 
-          {/* Login link */}
+          {}
           <p className="register-login-link" ref={loginLinkRef}>
             Already have an account? <a href="/login">Login here</a>
           </p>

@@ -79,7 +79,7 @@ const Home: React.FC = () => {
   const dealRadarRef = useRef<HTMLElement>(null);
   const statsAnimatedRef = useRef<HTMLDivElement>(null);
 
-  // Hero floating orbs with parallax
+  
   const heroOrb1Ref = useRef<HTMLDivElement>(null);
   const heroOrb2Ref = useRef<HTMLDivElement>(null);
   const heroOrb3Ref = useRef<HTMLDivElement>(null);
@@ -127,10 +127,10 @@ const Home: React.FC = () => {
     fetchWishlist();
   }, [isAuthenticated]);
 
-  // ===== MASTER GSAP ANIMATIONS =====
+  
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero entrance animations
+      
       const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       if (titleRef.current) {
@@ -170,7 +170,7 @@ const Home: React.FC = () => {
           }, wi * 0.15);
         });
 
-        // Word-level rise animation
+        
         heroTl.to(titleRef.current.querySelectorAll('span'), {
           opacity: 1,
           y: 0,
@@ -188,7 +188,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Hero background orbs floating
+      
       if (heroOrb1Ref.current) {
         gsap.to(heroOrb1Ref.current, {
           x: 100,
@@ -223,7 +223,7 @@ const Home: React.FC = () => {
         });
       }
 
-      // Hero parallax on scroll
+      
       if (heroRef.current) {
         gsap.to(heroRef.current, {
           y: -80,
@@ -238,7 +238,7 @@ const Home: React.FC = () => {
         });
       }
 
-      // Discovery section reveal
+      
       if (discoveryRef.current) {
         gsap.fromTo(discoveryRef.current,
           { opacity: 0, y: 80 },
@@ -252,7 +252,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Discovery chips staggered entrance
+      
       if (discoveryRef.current) {
         gsap.fromTo(discoveryRef.current.querySelectorAll('.discovery-chip'),
           { opacity: 0, y: 30, scale: 0.9 },
@@ -266,7 +266,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Discovery metrics animated numbers
+      
       if (statsAnimatedRef.current) {
         const metrics = Array.from(statsAnimatedRef.current.querySelectorAll('.discovery-metric strong')) as HTMLElement[];
         const numericMetrics: { el: HTMLElement; finalValue: number; prefix: string }[] = [];
@@ -276,7 +276,7 @@ const Home: React.FC = () => {
           const match = text.match(/(\d+)/);
           const prefix = text.includes('$') ? '$' : '';
           
-          // Only animate metrics that are purely numeric (with optional $ prefix)
+          
           if (match && /^[\$\d]+$/.test(text.replace(/\d+/, match[0]).trim())) {
             const finalValue = parseInt(match[0]);
             numericMetrics.push({ el, finalValue, prefix });
@@ -295,7 +295,7 @@ const Home: React.FC = () => {
             },
             onComplete: () => {
               numericMetrics.forEach(({ el, finalValue, prefix }) => {
-                // Animate number counting
+                
                 const obj = { val: 0 };
                 gsap.to(obj, {
                   val: finalValue,
@@ -311,7 +311,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Search & filter section reveal
+      
       if (searchRef.current) {
         gsap.fromTo(searchRef.current,
           { opacity: 0, y: 80 },
@@ -325,7 +325,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Vibe chips staggered
+      
       if (searchRef.current) {
         gsap.fromTo(searchRef.current.querySelectorAll('.vibe-chip'),
           { opacity: 0, y: 30, scale: 0.9 },
@@ -339,7 +339,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Filter buttons staggered
+      
       if (searchRef.current) {
         gsap.fromTo(searchRef.current.querySelectorAll('.filter-btn'),
           { opacity: 0, y: 25, scale: 0.9 },
@@ -353,7 +353,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // AI for you section
+      
       if (aiSectionRef.current) {
         gsap.fromTo(aiSectionRef.current,
           { opacity: 0, y: 100, scale: 0.96 },
@@ -367,7 +367,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Compare launchpad
+      
       if (compareRef.current) {
         gsap.fromTo(compareRef.current,
           { opacity: 0, y: 80, scale: 0.96 },
@@ -381,7 +381,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Deal radar section
+      
       if (dealRadarRef.current) {
         gsap.fromTo(dealRadarRef.current,
           { opacity: 0, y: 100 },
@@ -406,7 +406,7 @@ const Home: React.FC = () => {
         );
       }
 
-      // Event cards entrance
+      
       if (eventsRef.current) {
         gsap.fromTo(eventsRef.current.querySelectorAll('.event-card'),
           { 
@@ -441,7 +441,7 @@ const Home: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // Re-trigger event cards animation when filteredEvents changes
+  
   useEffect(() => {
     if (!loading && eventsRef.current) {
       const cards = eventsRef.current.querySelectorAll('.event-card');
@@ -472,7 +472,7 @@ const Home: React.FC = () => {
     }
   }, [loading, filteredEvents]);
 
-  // Animate AI recommendation cards when they load
+  
   useEffect(() => {
     if (aiRecommendations && aiRecommendations.events.length > 0) {
       const cards = document.querySelectorAll('.ai-recs-card');
@@ -492,7 +492,7 @@ const Home: React.FC = () => {
     }
   }, [aiRecommendations]);
 
-  // Handle chip clicks with GSAP feedback
+  
   const handleDiscoveryClick = useCallback((mode: DiscoveryMode) => {
     gsap.fromTo('.discovery-chip.active',
       { scale: 1 },
@@ -577,7 +577,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     let filtered = [...events];
 
-    // Filter by search query
+    
     if (searchQuery) {
       filtered = filtered.filter(event =>
         event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -586,12 +586,12 @@ const Home: React.FC = () => {
       );
     }
 
-    // Filter by category
+    
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(event => event.category === selectedCategory);
     }
 
-    // Filter by wishlist
+    
     if (showWishlistOnly) {
       filtered = filtered.filter(event => wishlistEventIds.has(event._id));
     }
@@ -600,7 +600,7 @@ const Home: React.FC = () => {
       filtered = filtered.filter(event => matchesVibe(event, vibeMode));
     }
 
-    // Discovery lenses
+    
     if (discoveryMode === 'weekend') {
       filtered = filtered.filter(event => isWeekendEvent(event) && getDaysUntilEvent(event) >= 0);
     }
@@ -617,7 +617,7 @@ const Home: React.FC = () => {
       filtered = filtered.filter(event => isUpcomingSoon(event, 7));
     }
 
-    // Sorting
+    
     if (sortMode === 'smart') {
       filtered.sort((a, b) => getSmartScore(b) - getSmartScore(a));
     }
@@ -720,10 +720,10 @@ const Home: React.FC = () => {
       const response = await aiAPI.personalized(3);
       const { recommendations, eventIds } = response.data;
 
-      // Map recommended event IDs to full event objects
+      
       const recEvents = events.filter((event) => eventIds.includes(event._id));
 
-      // If Gemini didn't return proper IDs, fall back to smart picks based on user
+      
       if (recEvents.length === 0 && eventIds.length === 0) {
         const fallbackEvents = [...events]
           .sort((a, b) => getSmartScore(b) - getSmartScore(a))
@@ -773,7 +773,7 @@ const Home: React.FC = () => {
     }
   };
 
-  // Refresh events when component mounts or when returning from edit
+  
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -864,7 +864,7 @@ const Home: React.FC = () => {
         cancelText="Cancel"
       />
       
-      {/* ===== Enhanced Hero Section ===== */}
+      {}
       <div className="hero" ref={heroRef}>
         <div className="hero-bg-shape shape-1"></div>
         <div className="hero-bg-shape shape-2"></div>
@@ -886,7 +886,7 @@ const Home: React.FC = () => {
       </div>
 
       <div className="container">
-        {/* ===== Discovery Studio ===== */}
+        {}
         <div className="discovery-studio" ref={discoveryRef}>
           <div className="discovery-copy">
             <span className="discovery-kicker">Discovery Studio</span>
@@ -969,7 +969,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* ===== Search & Filter Section ===== */}
+        {}
         <div className="search-filter-section" ref={searchRef}>
           <div className="vibe-studio">
             <div className="vibe-copy">

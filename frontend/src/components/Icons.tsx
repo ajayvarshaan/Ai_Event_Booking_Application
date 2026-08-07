@@ -60,7 +60,7 @@ import {
   FaTerminal
 } from 'react-icons/fa';
 
-// Export constants for icon usage throughout the app
+
 export const IconCalendar = FaCalendarAlt;
 export const IconClock = FaClock;
 export const IconLocation = FaMapMarkerAlt;

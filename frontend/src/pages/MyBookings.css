@@ -1,6 +1,4 @@
-/* ============================================
-   UNIFIED MY BOOKINGS - Dark Glassmorphism
-   ============================================ */
+
 
 .my-bookings {
   min-height: 100vh;
@@ -170,7 +168,7 @@
   border-left: 4px solid #f56565;
 }
 
-/* AI Booking Assistant in My Bookings */
+
 .booking-actions {
   display: flex;
   flex-direction: column;

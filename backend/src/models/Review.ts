@@ -36,7 +36,7 @@ const reviewSchema = new Schema<IReview>(
   { timestamps: true }
 );
 
-// Ensure one review per user per event
+
 reviewSchema.index({ event: 1, user: 1 }, { unique: true });
 
 export default mongoose.model<IReview>('Review', reviewSchema);

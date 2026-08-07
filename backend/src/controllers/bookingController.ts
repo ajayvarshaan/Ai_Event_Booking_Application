@@ -27,7 +27,7 @@ export const createBooking = async (req: AuthRequest, res: Response): Promise<vo
     event.availableSeats -= seats;
     await event.save();
 
-    // Log activity
+    
     try {
       await logActivity({
         user: req.user,
@@ -40,7 +40,7 @@ export const createBooking = async (req: AuthRequest, res: Response): Promise<vo
       });
     } catch (activityError) {
       console.error('Activity logging failed:', activityError);
-      // Continue even if activity logging fails
+      
     }
 
     res.status(201).json(booking);
@@ -77,10 +77,10 @@ export const getUserBookingStats = async (req: AuthRequest, res: Response): Prom
       .populate('user', 'name email')
       .populate('event', 'title');
 
-    // Group by user
+    
     const userMap = new Map();
     bookings.forEach((booking: any) => {
-      // Skip bookings with deleted events
+      
       if (!booking.event || !booking.user) return;
       
       const userId = booking.user._id.toString();
@@ -122,10 +122,10 @@ export const getCanceledBookingStats = async (req: AuthRequest, res: Response): 
       .populate('user', 'name email')
       .populate('event', 'title');
 
-    // Group by user
+    
     const userMap = new Map();
     bookings.forEach((booking: any) => {
-      // Skip bookings with deleted events
+      
       if (!booking.event || !booking.user) return;
       
       const userId = booking.user._id.toString();
@@ -178,7 +178,7 @@ export const cancelBooking = async (req: AuthRequest, res: Response): Promise<vo
       event.availableSeats += booking.seats;
       await event.save();
 
-      // Log activity
+      
       try {
         await logActivity({
           user: req.user,
@@ -191,7 +191,7 @@ export const cancelBooking = async (req: AuthRequest, res: Response): Promise<vo
         });
       } catch (activityError) {
         console.error('Activity logging failed:', activityError);
-        // Continue even if activity logging fails
+        
       }
     }
 

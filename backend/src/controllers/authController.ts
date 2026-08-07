@@ -22,7 +22,7 @@ export const register = async (req: AuthRequest, res: Response): Promise<void> =
 
     const user = await User.create({ name, email, password });
 
-    // Log activity
+    
     try {
       await logActivity({
         user: { _id: user._id, name: user.name, email: user.email },
@@ -52,19 +52,19 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select('+password');
 
-    // Account not found -> distinct error so frontend can prompt to register
+    
     if (!user) {
       res.status(404).json({ message: 'Account not found. Please create a new account.' });
       return;
     }
 
-    // Google-only accounts have no password -> direct them to Google sign-in
+    
     if (user && !user.password) {
       res.status(401).json({ message: 'This account uses Google Sign-In. Please continue with Google.' });
       return;
     }
     if (user && (await user.comparePassword(password))) {
-      // Log activity
+      
       try {
         await logActivity({
           user: { _id: user._id, name: user.name, email: user.email },
@@ -122,7 +122,7 @@ export const googleLogin = async (req: AuthRequest, res: Response): Promise<void
     const name = payload.name || email.split('@')[0];
     const avatar = payload.picture || '';
 
-    // Determine role from ADMIN_EMAILS allowlist (comma-separated in env)
+    
     const adminEmails = (process.env.ADMIN_EMAILS || '')
       .split(',')
       .map((e) => e.trim().toLowerCase())
@@ -140,20 +140,20 @@ export const googleLogin = async (req: AuthRequest, res: Response): Promise<void
         role
       });
     } else {
-      // Attach googleId/avatar if this account was originally email/password
+      
       if (!user.googleId) {
         user.googleId = payload.sub;
         user.avatar = avatar || user.avatar;
         await user.save();
       }
-      // Promote to admin if allowlisted and not already admin
+      
       if (role === 'admin' && user.role !== 'admin') {
         user.role = 'admin';
         await user.save();
       }
     }
 
-    // Log activity
+    
     try {
       await logActivity({
         user: { _id: user._id, name: user.name, email: user.email },

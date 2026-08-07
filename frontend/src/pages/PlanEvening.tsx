@@ -74,10 +74,10 @@ const navigate = useNavigate();
     fetchEvents();
   }, []);
 
-// Master GSAP entrance animations
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Floating background orbs
+      
       if (orb1Ref.current) {
         gsap.to(orb1Ref.current, {
           x: 120, y: 80, scale: 1.4, duration: 12, repeat: -1, yoyo: true, ease: 'sine.inOut'
@@ -96,7 +96,7 @@ const navigate = useNavigate();
 
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Title word-by-word reveal with 3D rotation + glow
+      
       if (titleRef.current) {
         const words = titleRef.current.textContent?.split(' ') || [];
         titleRef.current.textContent = '';
@@ -115,7 +115,7 @@ const navigate = useNavigate();
         });
       }
 
-      // Subtitle fade
+      
       if (headerRef.current) {
         const p = headerRef.current.querySelector('p');
         if (p) {
@@ -123,7 +123,7 @@ const navigate = useNavigate();
         }
       }
 
-      // Planner controls stagger entrance
+      
       if (controlsRef.current) {
         tl.fromTo(controlsRef.current.querySelectorAll('.planner-control'),
           { opacity: 0, y: 60, scale: 0.9, rotationY: -12 },
@@ -135,7 +135,7 @@ const navigate = useNavigate();
         );
       }
 
-      // Summary items stagger with counters
+      
       if (summaryRef.current) {
         tl.fromTo(summaryRef.current.querySelectorAll('.summary-item'),
           { opacity: 0, y: 40, scale: 0.85 },
@@ -164,7 +164,7 @@ const navigate = useNavigate();
         );
       }
 
-      // Actions reveal
+      
       if (actionsRef.current) {
         tl.fromTo(actionsRef.current,
           { opacity: 0, y: 40, scale: 0.95 },
@@ -173,7 +173,7 @@ const navigate = useNavigate();
         );
       }
 
-      // AI button glow pulse
+      
       if (aiBtnRef.current) {
         gsap.to(aiBtnRef.current, {
           boxShadow: '0 0 30px rgba(240,147,251,0.9), 0 0 60px rgba(102,126,234,0.6)',
@@ -181,7 +181,7 @@ const navigate = useNavigate();
         });
       }
 
-      // Event cards 3D flip entrance with ScrollTrigger
+      
       if (planRef.current) {
         gsap.fromTo(planRef.current.querySelectorAll('.plan-event-card'),
           { opacity: 0, y: 100, scale: 0.9, rotationY: -18 },
@@ -197,7 +197,7 @@ const navigate = useNavigate();
     return () => ctx.revert();
   }, [loading]);
 
-  // Re-animate plan cards when filters change
+  
   useEffect(() => {
     if (!loading && planRef.current) {
       const cards = planRef.current.querySelectorAll('.plan-event-card');
@@ -213,7 +213,7 @@ const navigate = useNavigate();
     }
   }, [vibe, maxBudget, startHour, events, loading]);
 
-  // 3D tilt on event card hover
+  
   const handleCardMove = useCallback((e: React.MouseEvent) => {
     const card = e.currentTarget as HTMLElement;
     const rect = card.getBoundingClientRect();
@@ -238,7 +238,7 @@ const navigate = useNavigate();
     });
   }, []);
 
-  // AI itinerary box entrance
+  
   useEffect(() => {
     if (aiItinerary && planRef.current) {
       const cards = planRef.current.querySelectorAll('.plan-event-card');
@@ -255,13 +255,13 @@ const navigate = useNavigate();
   }, [aiItinerary]);
 
   const parseEventDateTime = (event: Event) => {
-    // Handle ISO string dates properly
+    
     const date = new Date(event.date);
     const [hoursStr, minutesStr] = event.time.split(':');
     const hours = Number(hoursStr) || 0;
     const minutes = Number(minutesStr) || 0;
     
-    // Create new date in local timezone
+    
     const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes, 0, 0);
     return localDate;
   };
@@ -335,7 +335,7 @@ const navigate = useNavigate();
         eventDate.setHours(0, 0, 0, 0);
         const daysAway = Math.floor((eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
         
-        // Normalize days away (cap at 365 for scoring)
+        
         const normalizedDays = Math.min(daysAway, 365);
         const soonScore = Math.max(0, 1 - normalizedDays / 365);
         const valueScore = Math.max(0, 1 - Math.min(event.price, maxBudget) / Math.max(maxBudget, 1));

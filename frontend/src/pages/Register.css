@@ -1,6 +1,4 @@
-/* ============================================
-   PREMIUM REGISTER PAGE - Matches Login Design
-   ============================================ */
+
 
 .register-page {
   position: relative;
@@ -14,7 +12,7 @@
   z-index: 1;
 }
 
-/* Animated gradient overlay */
+
 .register-page::before {
   content: '';
   position: absolute;
@@ -33,7 +31,7 @@
   100% { transform: scale(1) rotate(-5deg); opacity: 0.8; }
 }
 
-/* Grid overlay for tech feel */
+
 .register-page::after {
   content: '';
   position: absolute;
@@ -46,7 +44,7 @@
   pointer-events: none;
 }
 
-/* ===== Particle Canvas ===== */
+
 .register-particles {
   position: absolute;
   top: 0;
@@ -57,7 +55,7 @@
   pointer-events: none;
 }
 
-/* ===== Floating Orbs ===== */
+
 .register-orb {
   position: absolute;
   border-radius: 50%;
@@ -91,7 +89,7 @@
   left: 60%;
 }
 
-/* ===== Main Card Container ===== */
+
 .register-card-wrapper {
   position: relative;
   z-index: 10;
@@ -119,7 +117,7 @@
   will-change: transform;
 }
 
-/* Card shine effect */
+
 .register-card::before {
   content: '';
   position: absolute;
@@ -143,7 +141,7 @@
   50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
-/* Card top accent line */
+
 .register-card::after {
   content: '';
   position: absolute;
@@ -162,7 +160,7 @@
   100% { background-position: 200% 0%; }
 }
 
-/* ===== Logo / Icon ===== */
+
 .register-logo {
   display: flex;
   justify-content: center;
@@ -200,7 +198,7 @@
   100% { transform: translateX(100%); }
 }
 
-/* ===== Title ===== */
+
 .register-title {
   text-align: center;
   margin-bottom: 8px;
@@ -234,7 +232,7 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== Form ===== */
+
 .register-form {
   display: flex;
   flex-direction: column;
@@ -242,7 +240,7 @@
   transform-style: preserve-3d;
 }
 
-/* Input group with icon */
+
 .register-input-group {
   position: relative;
   transform-style: preserve-3d;
@@ -299,7 +297,7 @@
   transform: translateY(-2px);
 }
 
-/* Input underline animation */
+
 .register-input-group::after {
   content: '';
   position: absolute;
@@ -318,7 +316,7 @@
   width: 100%;
 }
 
-/* Password toggle */
+
 .register-password-toggle {
   position: absolute;
   right: 14px;
@@ -339,7 +337,7 @@
   transform: translateY(-50%) scale(1.1);
 }
 
-/* ===== Submit Button ===== */
+
 .register-submit {
   position: relative;
   width: 100%;
@@ -392,7 +390,7 @@
   cursor: not-allowed;
 }
 
-/* Loading spinner */
+
 .register-spinner {
   display: inline-block;
   width: 20px;
@@ -409,7 +407,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* Password strength hint */
+
 .register-hint {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
@@ -417,7 +415,7 @@
   letter-spacing: 0.3px;
 }
 
-/* ===== Login Link ===== */
+
 .register-login-link {
   text-align: center;
   margin-top: 24px;
@@ -453,7 +451,7 @@
   width: 100%;
 }
 
-/* ===== Error Message ===== */
+
 .register-error {
   background: rgba(255, 0, 0, 0.1);
   border: 1px solid rgba(255, 0, 0, 0.3);
@@ -477,7 +475,7 @@
   80% { transform: translateX(5px); }
 }
 
-/* ===== Responsive ===== */
+
 @media (max-width: 480px) {
   .register-card {
     padding: 36px 24px;

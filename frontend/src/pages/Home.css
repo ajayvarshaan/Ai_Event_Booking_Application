@@ -6,7 +6,7 @@
   overflow-x: hidden;
 }
 
-/* ===== Unified Section Styles ===== */
+
 .ai-for-you-section,
 .deal-radar-section {
   margin: 0 20px 40px 20px;
@@ -56,7 +56,7 @@
   line-height: 1.7;
 }
 
-/* ===== AI Feature Styles ===== */
+
 
 .ai-search-toggle {
   position: absolute;
@@ -124,7 +124,7 @@
   color: #718096;
 }
 
-/* AI For You Section */
+
 .ai-for-you-section {
   margin: 40px 0;
   background: rgba(255, 255, 255, 0.98);
@@ -315,9 +315,7 @@
   }
 }
 
-/* ============================================
-   ENHANCED HERO SECTION
-   ============================================ */
+
 .hero {
   position: relative;
   background: linear-gradient(135deg, rgba(15, 12, 41, 0.95) 0%, rgba(48, 43, 99, 0.95) 40%, rgba(36, 36, 62, 0.95) 100%);
@@ -334,7 +332,7 @@
   will-change: transform;
 }
 
-/* Animated gradient overlay */
+
 .hero::before {
   content: '';
   position: absolute;
@@ -354,7 +352,7 @@
   100% { transform: scale(1) rotate(-5deg); opacity: 0.8; }
 }
 
-/* Grid overlay */
+
 .hero-grid-overlay {
   position: absolute;
   inset: 0;
@@ -405,7 +403,7 @@
   transform: translate(-50%, -50%);
 }
 
-/* Floating orbs */
+
 .hero-orb {
   position: absolute;
   border-radius: 50%;
@@ -470,7 +468,7 @@
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Scroll indicator */
+
 .hero-scroll-indicator {
   position: relative;
   z-index: 2;

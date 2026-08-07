@@ -1,7 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-// Connect to MongoDB
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/event-booking')
   .then(() => console.log('MongoDB Connected'))
   .catch(err => {
@@ -9,7 +9,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/event-boo
     process.exit(1);
   });
 
-// Define schemas
+
 const userSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -34,7 +34,7 @@ const eventSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const Event = mongoose.model('Event', eventSchema);
 
-// Sample events data with FUTURE dates
+
 const today = new Date();
 const futureDate = (daysFromNow) => {
   const date = new Date();
@@ -46,7 +46,7 @@ const sampleEvents = [
   {
     title: 'Summer Music Festival 2025',
     description: 'Join us for an amazing outdoor music festival featuring top artists from around the world. Experience live performances, food trucks, and great vibes!',
-    date: futureDate(45), // 45 days from now
+    date: futureDate(45), 
     time: '18:00',
     location: 'Central Park, New York',
     category: 'music',
@@ -58,7 +58,7 @@ const sampleEvents = [
   {
     title: 'Tech Conference 2025',
     description: 'Annual technology conference featuring keynote speakers, workshops, and networking opportunities. Learn about the latest trends in AI, Web3, and Cloud Computing.',
-    date: futureDate(30), // 30 days from now
+    date: futureDate(30), 
     time: '09:00',
     location: 'Convention Center, San Francisco',
     category: 'tech',
@@ -70,7 +70,7 @@ const sampleEvents = [
   {
     title: 'Food & Wine Expo',
     description: 'Taste exquisite dishes from renowned chefs and sample fine wines from around the world. A culinary experience you won\'t forget!',
-    date: futureDate(60), // 60 days from now
+    date: futureDate(60), 
     time: '12:00',
     location: 'Grand Hotel, Chicago',
     category: 'other',
@@ -82,7 +82,7 @@ const sampleEvents = [
   {
     title: 'Marathon Championship',
     description: 'Annual city marathon with professional and amateur categories. Run through scenic routes and compete for prizes!',
-    date: futureDate(90), // 90 days from now
+    date: futureDate(90), 
     time: '06:00',
     location: 'City Stadium, Boston',
     category: 'sports',
@@ -94,7 +94,7 @@ const sampleEvents = [
   {
     title: 'Business Leadership Summit',
     description: 'Connect with industry leaders and learn strategies for business growth. Featuring panel discussions, workshops, and networking sessions.',
-    date: futureDate(50), // 50 days from now
+    date: futureDate(50), 
     time: '08:30',
     location: 'Business Center, Seattle',
     category: 'business',
@@ -106,7 +106,7 @@ const sampleEvents = [
   {
     title: 'Jazz Night Live',
     description: 'An intimate evening of smooth jazz featuring local and international artists. Enjoy cocktails and great music in a cozy atmosphere.',
-    date: futureDate(20), // 20 days from now
+    date: futureDate(20), 
     time: '20:00',
     location: 'Blue Note Club, New Orleans',
     category: 'music',
@@ -118,7 +118,7 @@ const sampleEvents = [
   {
     title: 'Startup Pitch Competition',
     description: 'Watch innovative startups pitch their ideas to top investors. Network with entrepreneurs and learn about the latest business trends.',
-    date: futureDate(15), // 15 days from now
+    date: futureDate(15), 
     time: '14:00',
     location: 'Innovation Hub, Austin',
     category: 'business',
@@ -130,7 +130,7 @@ const sampleEvents = [
   {
     title: 'Rock Concert Extravaganza',
     description: 'Epic rock concert featuring legendary bands and rising stars. Get ready for an unforgettable night of music!',
-    date: futureDate(7), // 7 days from now
+    date: futureDate(7), 
     time: '19:30',
     location: 'Madison Square Garden, New York',
     category: 'music',
@@ -143,7 +143,7 @@ const sampleEvents = [
 
 async function seedDatabase() {
   try {
-    // Find or create an admin user
+    
     let adminUser = await User.findOne({ email: 'admin@eventbooking.com' });
     
     if (!adminUser) {
@@ -163,11 +163,11 @@ async function seedDatabase() {
       console.log('✅ Admin user already exists');
     }
 
-    // Clear existing events
+    
     await Event.deleteMany({});
     console.log('✅ Cleared existing events');
 
-    // Add sample events
+    
     const eventsWithOrganizer = sampleEvents.map(event => ({
       ...event,
       organizer: adminUser._id

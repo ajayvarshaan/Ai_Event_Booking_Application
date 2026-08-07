@@ -43,7 +43,7 @@ const EditEvent: React.FC = () => {
         const response = await eventAPI.getOne(eventId!);
         const event = response.data;
         
-        // Format date for input (YYYY-MM-DD)
+        
         const dateObj = new Date(event.date);
         const formattedDate = dateObj.toISOString().split('T')[0];
         
