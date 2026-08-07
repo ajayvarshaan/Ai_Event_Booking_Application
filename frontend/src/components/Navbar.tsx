@@ -210,9 +210,13 @@ const Navbar: React.FC = () => {
         <div className="nav-auth" ref={authRef}>
           {isAuthenticated ? (
             <>
-              <div className="user-avatar">
-                {getInitials(user?.name || 'U')}
-              </div>
+              {user?.avatar ? (
+                <img className="user-avatar" src={user.avatar} alt={user.name} referrerPolicy="no-referrer" />
+              ) : (
+                <div className="user-avatar">
+                  {getInitials(user?.name || 'U')}
+                </div>
+              )}
               <span className="user-name">{user?.name}</span>
               <button className="btn-secondary" onClick={handleLogout} onMouseMove={handleAuthMove} onMouseLeave={handleAuthLeave}>
                 Logout
@@ -259,7 +263,11 @@ const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <span className="mobile-menu-user">
-                <span className="user-avatar">{getInitials(user?.name || 'U')}</span>
+                {user?.avatar ? (
+                  <img className="user-avatar" src={user.avatar} alt={user.name} referrerPolicy="no-referrer" />
+                ) : (
+                  <span className="user-avatar">{getInitials(user?.name || 'U')}</span>
+                )}
                 {user?.name}
               </span>
               <button className="btn-secondary" onClick={handleLogout}>Logout</button>

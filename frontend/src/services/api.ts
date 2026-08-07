@@ -6,6 +6,7 @@ interface AuthResponse {
   email: string;
   role: string;
   token: string;
+  avatar?: string;
 }
 
 interface Event {
@@ -64,6 +65,8 @@ export const authAPI = {
     API.post<AuthResponse>('/auth/register', data),
   login: (data: { email: string; password: string }) =>
     API.post<AuthResponse>('/auth/login', data),
+  googleLogin: (idToken: string) =>
+    API.post<AuthResponse>('/auth/google', { idToken }),
   getProfile: () => API.get<AuthResponse>('/auth/profile')
 };
 
