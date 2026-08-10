@@ -69,6 +69,15 @@
   --font-size-xl: 24px;
   --font-size-2xl: 32px;
   --font-size-3xl: 40px;
+
+  /* Text on white/light cards */
+  --text-on-white: #1a202c;
+  --text-on-white-secondary: #2d3748;
+  --text-on-white-muted: #718096;
+
+  /* Gradient accent */
+  --gradient-brand: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-aurora: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
 }
 
 * {
@@ -695,6 +704,54 @@ input::placeholder, textarea::placeholder {
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
   50% { box-shadow: 0 0 40px rgba(102, 126, 234, 0.6); }
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-aurora {
+  background: var(--gradient-aurora);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card shimmer effect */
+@keyframes cardShimmer {
+  0% { left: -100%; }
+  60%, 100% { left: 100%; }
+}
+
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  animation: cardShimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Page section divider glow line */
+.section-glow-divider {
+  width: 80px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--gradient-aurora);
+  margin: 12px auto 0;
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.6);
 }
 
 

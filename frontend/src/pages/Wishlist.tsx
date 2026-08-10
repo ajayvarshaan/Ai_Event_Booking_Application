@@ -57,16 +57,18 @@ const Wishlist: React.FC = () => {
     <div className="wishlist-page">
       <div className="container">
         <div className="wishlist-header">
+          <span className="wishlist-header-kicker">❤️ Saved Events</span>
           <h1>My Wishlist</h1>
-          <p>Your saved events in one place.</p>
+          <p>Your hand-picked events, saved in one beautiful place.</p>
         </div>
 
         {events.length === 0 ? (
           <div className="wishlist-empty">
-            <h2>No Wishlist Events Yet</h2>
-            <p>Tap the heart icon on any event card to save it here.</p>
+            <span className="wishlist-empty-icon">💫</span>
+            <h2>Your Wishlist is Empty</h2>
+            <p>Tap the heart icon on any event card to save it here for later. Your favourite events are just a click away.</p>
             <Link to="/home" className="btn-primary">
-              Browse Events
+              ✨ Browse Events
             </Link>
           </div>
         ) : (

@@ -53,7 +53,7 @@ interface Activity {
 }
 
 const API: AxiosInstance = axios.create({
-  baseURL: "https://ai-event-booking-application-backend.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
 });
 
 API.interceptors.request.use((req) => {

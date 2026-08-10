@@ -1,43 +1,45 @@
 
 
 .navbar {
-  background: rgba(15, 12, 41, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  padding: 16px 0;
+  background: rgba(10, 8, 30, 0.92);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  padding: 14px 0;
   position: sticky;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  animation: navbarGlow 5s ease-in-out infinite;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   width: 100%;
   box-sizing: border-box;
 }
 
 @keyframes navbarGlow {
-  0%, 100% { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 rgba(255, 0, 150, 0); }
-  50% { box-shadow: 0 4px 28px rgba(0, 0, 0, 0.4), 0 0 30px rgba(102, 126, 234, 0.1); }
+  0%, 100% { box-shadow: 0 4px 30px rgba(0,0,0,0.5), 0 0 0 rgba(255,0,150,0); }
+  50% { box-shadow: 0 4px 40px rgba(0,0,0,0.6), 0 0 40px rgba(102,126,234,0.12); }
 }
 
 
 .navbar::before {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #667eea, #ff0099, #00c8ff, #764ba2, #667eea);
-  background-size: 400% 100%;
-  animation: navAccentFlow 6s linear infinite;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #ff0099, #00c8ff, #764ba2, #f093fb, #667eea);
+  background-size: 300% 100%;
+  animation: navAccentFlow 5s linear infinite;
+  opacity: 0.85;
 }
 
 @keyframes navAccentFlow {
   0% { background-position: 0% 50%; }
-  100% { background-position: 400% 50%; }
+  100% { background-position: 300% 50%; }
 }
 
 .navbar .container {
@@ -122,16 +124,17 @@
 
 .nav-links a {
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.88);
   font-weight: 600;
-  font-size: 15px;
-  transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease;
+  font-size: 14.5px;
+  letter-spacing: 0.1px;
+  transition: color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
   position: relative;
   white-space: nowrap;
-  padding: 8px 0;
+  padding: 8px 2px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .nav-links a::after {

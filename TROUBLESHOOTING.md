@@ -141,6 +141,23 @@ localStorage.clear()
 
 ---
 
+### 8. Google OAuth Error 400: origin_mismatch
+
+**Error:** `Access blocked: Authorisation error - Error 400: origin_mismatch`
+
+**Cause:** Google Cloud Console requires the exact URL origin of your frontend (`http://localhost:3000`) to be explicitly authorized in your Google Cloud Console OAuth Credentials.
+
+**Solution:**
+1. Go to [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials).
+2. Select your Client ID: `1044175093023-sp3jkh8mrks61d4c3ioa3ike7nccgf4u.apps.googleusercontent.com` (or your custom Client ID).
+3. Under **Authorized JavaScript origins**, click **+ ADD URI**.
+4. Add:
+   - `http://localhost:3000`
+   - `http://127.0.0.1:3000`
+5. Save the changes (takes 1–5 minutes to take effect).
+
+---
+
 ## 🔍 Verification Steps
 
 ### Check Backend:

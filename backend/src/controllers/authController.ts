@@ -49,7 +49,8 @@ export const register = async (req: AuthRequest, res: Response): Promise<void> =
 
 export const login = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email?.trim().toLowerCase();
     const user = await User.findOne({ email }).select('+password');
 
     

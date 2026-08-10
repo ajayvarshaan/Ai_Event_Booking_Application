@@ -8,7 +8,7 @@ import Modal from '../components/Modal';
 import './Login.css';
 
 const GOOGLE_CLIENT_ID =
-  (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined) || 'YOUR_GOOGLE_CLIENT_ID';
+  (import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined)?.trim() || 'YOUR_GOOGLE_CLIENT_ID';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -381,27 +381,32 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     const initGoogle = () => {
-      if (!window.google?.accounts?.id) return;
+      if (!window.google?.accounts?.id || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') return;
 
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response: { credential: string }) => {
-          if (response.credential) {
-            handleGoogleLogin(response.credential);
+      try {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: (response: { credential: string }) => {
+            if (response.credential) {
+              handleGoogleLogin(response.credential);
+            }
           }
-        }
-      });
-
-      if (googleBtnRef.current) {
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          type: 'standard',
-          theme: 'outline',
-          size: 'large',
-          text: 'continue_with',
-          shape: 'pill',
-          logo_alignment: 'left',
-          width: googleBtnRef.current.clientWidth
         });
+
+        if (googleBtnRef.current) {
+          const btnWidth = googleBtnRef.current.clientWidth || 250;
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large',
+            text: 'continue_with',
+            shape: 'pill',
+            logo_alignment: 'left',
+            width: btnWidth
+          });
+        }
+      } catch (err) {
+        console.warn('Google Sign-In initialization error:', err);
       }
     };
 
