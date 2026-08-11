@@ -1112,3 +1112,19 @@
     font-size: 13px;
   }
 }
+
+/* Mini trend sparklines on stat cards */
+.dashboard-spark {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 140px;
+  display: flex;
+  justify-content: center;
+  opacity: 0.95;
+}
+
+.dashboard-spark .sparkline {
+  width: 100%;
+  height: 36px;
+}
+

@@ -30,7 +30,7 @@ const activitySchema = new Schema<IActivity>({
   action: {
     type: String,
     required: true,
-    enum: ['booking_created', 'booking_cancelled', 'event_created', 'event_updated', 'event_deleted', 'user_registered', 'user_login']
+    enum: ['booking_created', 'booking_cancelled', 'event_created', 'event_updated', 'event_deleted', 'user_registered', 'user_login', 'google_login']
   },
   description: {
     type: String,

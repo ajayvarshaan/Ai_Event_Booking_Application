@@ -112,6 +112,7 @@ const AdminDashboard: React.FC = () => {
       case 'event_deleted': return '🗑️';
       case 'user_registered': return '👤';
       case 'user_login': return '🔐';
+      case 'google_login': return '🔐';
       default: return '📌';
     }
   };
@@ -125,6 +126,7 @@ const AdminDashboard: React.FC = () => {
       case 'event_deleted': return '#f59e0b';
       case 'user_registered': return '#06b6d4';
       case 'user_login': return '#6366f1';
+      case 'google_login': return '#4285F4';
       default: return '#6b7280';
     }
   };

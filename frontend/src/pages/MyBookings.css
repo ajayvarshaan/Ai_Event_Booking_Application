@@ -62,6 +62,16 @@
   overflow: hidden;
 }
 
+/* Ensure the booking card keeps its dark translucent look even though the
+   generic .card utility (global.css) also targets these elements. Higher
+   specificity (.my-bookings .booking-card) guarantees it wins regardless of
+   CSS load order, so the white detail text stays visible. */
+.my-bookings .booking-card {
+  background: rgba(255, 255, 255, 0.07);
+  padding: 30px;
+  border-radius: 20px;
+}
+
 .booking-card::after {
   content: '';
   position: absolute;

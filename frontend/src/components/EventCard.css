@@ -532,3 +532,93 @@
     font-size: 24px;
   }
 }
+
+/* ============================================================
+   Advanced action buttons — Book / Edit / Delete / Compare
+   ============================================================ */
+.event-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Premium Book button with shimmer sweep */
+.btn-primary.book-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: skewX(-20deg);
+  animation: bookShimmer 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes bookShimmer {
+  0% { left: -140%; }
+  55%, 100% { left: 140%; }
+}
+
+.btn-primary.book-btn:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.03);
+  background: linear-gradient(135deg, #7b8cff 0%, #8b5cf6 100%);
+  box-shadow:
+    0 14px 36px rgba(102, 126, 234, 0.6),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Sold out / disabled state */
+.btn-primary.book-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  cursor: not-allowed;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.2),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3);
+  transform: none;
+}
+
+.btn-primary.book-btn:disabled::after {
+  display: none;
+}
+
+/* Edit button */
+.btn-secondary.edit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Two-step confirm Delete button */
+.delete-btn.confirming {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 0 0 3px rgba(239, 68, 68, 0.35),
+    0 8px 26px rgba(239, 68, 68, 0.55) !important;
+  animation: confirmPulse 1s ease-in-out infinite;
+  transform: scale(1.05);
+}
+
+@keyframes confirmPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 8px 26px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(239, 68, 68, 0.12), 0 12px 34px rgba(239, 68, 68, 0.75);
+  }
+}
+
+/* Compare icon alignment */
+.event-actions .compare-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.event-actions .compare-btn:hover svg {
+  transform: rotate(-15deg);
+}
+

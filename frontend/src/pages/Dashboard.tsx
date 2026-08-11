@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { bookingAPI, eventAPI } from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
@@ -10,6 +10,8 @@ FaCheckCircle, FaExclamationCircle, FaUser, FaBolt,
   FaFire, FaDollarSign, FaBalanceScale
 } from 'react-icons/fa';
 import './Dashboard.css';
+import DashboardCharts from '../components/DashboardCharts';
+import Sparkline from '../components/Sparkline';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -385,6 +387,32 @@ fetchStats();
 
   const filteredData = getFilteredAndSortedData();
 
+  // Monthly series used to feed the mini sparklines on the stat cards
+  const monthlyTrend = useMemo(() => {
+    const map: Record<string, { revenue: number; bookings: number; seats: number }> = {};
+    userBookingStats.forEach((u) =>
+      u.events.forEach((e) => {
+        const d = new Date(e.bookingDate);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!map[key]) map[key] = { revenue: 0, bookings: 0, seats: 0 };
+        map[key].revenue += e.totalPrice;
+        map[key].bookings += 1;
+        map[key].seats += e.seats;
+      })
+    );
+    return Object.keys(map)
+      .sort()
+      .map((m) => map[m]);
+  }, [userBookingStats]);
+
+  const sparkRevenue = monthlyTrend.map((m) => m.revenue);
+  const sparkBookings = monthlyTrend.map((m) => m.bookings);
+  const sparkSeats = monthlyTrend.map((m) => m.seats);
+  const sparkUsers = monthlyTrend.reduce<number[]>((acc, m) => {
+    acc.push((acc[acc.length - 1] || 0) + m.bookings);
+    return acc;
+  }, []);
+
   if (loading) {
     return <div className="loading">Loading dashboard...</div>;
   }
@@ -400,6 +428,7 @@ fetchStats();
             <div className="stat-content">
               <h3 data-value={dashboardStats.totalUsers}>{dashboardStats.totalUsers}</h3>
               <p>Total Users Booked</p>
+              <div className="dashboard-spark"><Sparkline data={sparkUsers} color="#667eea" /></div>
             </div>
           </div>
 
@@ -408,6 +437,7 @@ fetchStats();
             <div className="stat-content">
               <h3 data-value={dashboardStats.totalRevenue}>${dashboardStats.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               <p>Total Revenue</p>
+              <div className="dashboard-spark"><Sparkline data={sparkRevenue} color="#00c8ff" /></div>
             </div>
           </div>
 
@@ -416,6 +446,7 @@ fetchStats();
             <div className="stat-content">
               <h3 data-value={dashboardStats.totalBookings}>{dashboardStats.totalBookings}</h3>
               <p>Total Bookings</p>
+              <div className="dashboard-spark"><Sparkline data={sparkBookings} color="#f093fb" /></div>
             </div>
           </div>
 
@@ -424,6 +455,7 @@ fetchStats();
             <div className="stat-content">
               <h3 data-value={dashboardStats.totalSeats}>{dashboardStats.totalSeats}</h3>
               <p>Total Seats Booked</p>
+              <div className="dashboard-spark"><Sparkline data={sparkSeats} color="#48bb78" /></div>
             </div>
           </div>
 
@@ -451,6 +483,15 @@ fetchStats();
             </div>
           </div>
         </div>
+
+        <DashboardCharts
+          userBookingStats={userBookingStats}
+          canceledBookingStats={canceledBookingStats}
+          allEvents={allEvents}
+          stats={dashboardStats}
+          loading={loading}
+        />
+
 
         {}
         <div className="search-filter-section">

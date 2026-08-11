@@ -1,24 +1,34 @@
-import React, { useEffect, useRef } from 'react';
+import React, { lazy, Suspense, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Booking from './pages/Booking';
-import MyBookings from './pages/MyBookings';
-import CreateEvent from './pages/CreateEvent';
-import EditEvent from './pages/EditEvent';
-import Dashboard from './pages/Dashboard';
-import ActivityLog from './pages/ActivityLog';
-import Wishlist from './pages/Wishlist';
-import Compare from './pages/Compare';
-import PlanEvening from './pages/PlanEvening';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Chatbot from './components/Chatbot';
 import { useAuth } from './context/AuthContext';
 import { pageTransition, revealRouteShell } from './animations/gsapAnimations';
+
+// Lazy-loaded pages → each route is code-split into its own chunk
+// so the initial bundle stays small and routes load on demand.
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Booking = lazy(() => import('./pages/Booking'));
+const MyBookings = lazy(() => import('./pages/MyBookings'));
+const CreateEvent = lazy(() => import('./pages/CreateEvent'));
+const EditEvent = lazy(() => import('./pages/EditEvent'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ActivityLog = lazy(() => import('./pages/ActivityLog'));
+const Wishlist = lazy(() => import('./pages/Wishlist'));
+const Compare = lazy(() => import('./pages/Compare'));
+const PlanEvening = lazy(() => import('./pages/PlanEvening'));
+
+const RouteLoader: React.FC = () => (
+  <div className="route-loader">
+    <div className="route-loader-spinner" />
+    <span>Loading…</span>
+  </div>
+);
 
 const AppShell: React.FC = () => {
   const location = useLocation();
@@ -32,6 +42,7 @@ const AppShell: React.FC = () => {
 
   return (
     <div ref={routeShellRef} className="app-route-shell">
+      <Suspense fallback={<RouteLoader />}>
       <Routes>
         {}
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -168,6 +179,7 @@ const AppShell: React.FC = () => {
         {}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
+      </Suspense>
       {isAuthenticated && <Chatbot />}
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import gsap from 'gsap';
 import Countdown from './Countdown';
 import WishlistButton from './WishlistButton';
-import { FaMusic, FaFutbol, FaLaptopCode, FaBriefcase, FaGift, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFire } from 'react-icons/fa';
+import { FaMusic, FaFutbol, FaLaptopCode, FaBriefcase, FaGift, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFire, FaTicketAlt, FaTrashAlt, FaPen, FaBalanceScale, FaBan, FaExclamationTriangle } from 'react-icons/fa';
 import './EventCard.css';
 
 interface EventCardProps {
@@ -41,6 +41,12 @@ const EventCard: React.FC<EventCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [key, setKey] = useState(0);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (cardRef.current) {
@@ -162,6 +168,21 @@ const EventCard: React.FC<EventCardProps> = ({
     );
   }, []);
 
+  const soldOut = event.availableSeats <= 0;
+
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
+    handleClickPulse(e);
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      deleteTimerRef.current = setTimeout(() => setConfirmDelete(false), 3000);
+    } else {
+      if (deleteTimerRef.current) clearTimeout(deleteTimerRef.current);
+      setConfirmDelete(false);
+      onDelete?.(event._id);
+    }
+  }, [confirmDelete, onDelete, event._id, handleClickPulse]);
+
   const getCategoryIcon = (category: string) => {
     const icons: { [key: string]: React.ReactNode } = {
       music: <FaMusic />,
@@ -264,19 +285,25 @@ const EventCard: React.FC<EventCardProps> = ({
                 onMouseMove={handleMagneticMove}
                 onMouseLeave={handleMagneticLeave}
               >
+                <FaBalanceScale style={{ marginRight: '6px' }} />
                 {isCompared ? 'Compared' : 'Compare'}
               </button>
             )}
-            <button 
-              className="btn-primary" 
-              onClick={(e) => {
+            <button
+              className="btn-primary book-btn"
+              disabled={soldOut}
+              onClick={soldOut ? undefined : (e) => {
                 handleClickPulse(e);
                 onBook(event._id);
               }}
-              onMouseMove={handleMagneticMove}
-              onMouseLeave={handleMagneticLeave}
+              onMouseMove={!soldOut ? handleMagneticMove : undefined}
+              onMouseLeave={!soldOut ? handleMagneticLeave : undefined}
             >
-              Book Now
+              {soldOut ? (
+                <><FaBan style={{ marginRight: '6px' }} /> Sold Out</>
+              ) : (
+                <><FaTicketAlt style={{ marginRight: '6px' }} /> Book Now</>
+              )}
             </button>
           </>
         ) : (
@@ -291,23 +318,29 @@ const EventCard: React.FC<EventCardProps> = ({
                 onMouseMove={handleMagneticMove}
                 onMouseLeave={handleMagneticLeave}
               >
+                <FaBalanceScale style={{ marginRight: '6px' }} />
                 {isCompared ? 'Compared' : 'Compare'}
               </button>
             )}
-            <button 
-              className="btn-primary" 
-              onClick={(e) => {
+            <button
+              className="btn-primary book-btn"
+              disabled={soldOut}
+              onClick={soldOut ? undefined : (e) => {
                 handleClickPulse(e);
                 onBook(event._id);
               }}
-              onMouseMove={handleMagneticMove}
-              onMouseLeave={handleMagneticLeave}
+              onMouseMove={!soldOut ? handleMagneticMove : undefined}
+              onMouseLeave={!soldOut ? handleMagneticLeave : undefined}
             >
-              Book Now
+              {soldOut ? (
+                <><FaBan style={{ marginRight: '6px' }} /> Sold Out</>
+              ) : (
+                <><FaTicketAlt style={{ marginRight: '6px' }} /> Book Now</>
+              )}
             </button>
             {onEdit && (
-              <button 
-                className="btn-secondary" 
+              <button
+                className="btn-secondary edit-btn"
                 onClick={(e) => {
                   handleClickPulse(e);
                   onEdit(event._id);
@@ -315,20 +348,21 @@ const EventCard: React.FC<EventCardProps> = ({
                 onMouseMove={handleMagneticMove}
                 onMouseLeave={handleMagneticLeave}
               >
-                Edit
+                <FaPen style={{ marginRight: '6px' }} /> Edit
               </button>
             )}
             {onDelete && (
-              <button 
-                className="btn-danger" 
-                onClick={(e) => {
-                  handleClickPulse(e);
-                  onDelete(event._id);
-                }}
+              <button
+                className={`btn-danger delete-btn ${confirmDelete ? 'confirming' : ''}`}
+                onClick={handleDeleteClick}
                 onMouseMove={handleMagneticMove}
                 onMouseLeave={handleMagneticLeave}
               >
-                Delete
+                {confirmDelete ? (
+                  <><FaExclamationTriangle style={{ marginRight: '6px' }} /> Confirm?</>
+                ) : (
+                  <><FaTrashAlt style={{ marginRight: '6px' }} /> Delete</>
+                )}
               </button>
             )}
           </>
