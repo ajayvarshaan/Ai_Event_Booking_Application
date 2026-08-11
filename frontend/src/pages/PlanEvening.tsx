@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { eventAPI, aiAPI } from '../services/api';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { FaWallet, FaInfinity, FaCalendarDay, FaClock } from 'react-icons/fa';
+
 import './PlanEvening.css';
 
 gsap.registerPlugin(ScrollTrigger);
