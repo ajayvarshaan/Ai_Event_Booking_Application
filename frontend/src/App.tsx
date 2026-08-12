@@ -8,8 +8,6 @@ import Chatbot from './components/Chatbot';
 import { useAuth } from './context/AuthContext';
 import { pageTransition, revealRouteShell } from './animations/gsapAnimations';
 
-// Lazy-loaded pages → each route is code-split into its own chunk
-// so the initial bundle stays small and routes load on demand.
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));

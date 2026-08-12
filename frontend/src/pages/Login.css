@@ -542,10 +542,8 @@
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.login-google-btn iframe {
-  width: 100% !important;
+  align-items: center;
+  overflow: hidden;
 }
 
 
